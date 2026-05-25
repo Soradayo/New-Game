@@ -1,80 +1,40 @@
-\# Event System
+# イベントシステム
 
+## 概要
 
+イベントは創発的な人生の物語を生みます。
 
-\## Overview
+イベントは重み付きで、データ駆動です。
 
+## 要件
 
+イベントは必ず次を満たします:
 
-Events generate emergent life stories.
+- JSON-based である
+- weighted probability を使う
+- mods をサポートする
+- 短く、解釈しやすい
 
+イベント頻度は変化しなければなりません。
 
+重大イベントはまれでなければなりません。
 
-Events are weighted and data-driven.
+## 設計
 
+イベント構造:
 
+- conditions
+- weight
+- effects
+- text template
 
-\## Requirements
+カテゴリ:
 
+- daily
+- relationship
+- turning point
+- world
 
+関係変化は、おおよそ MTTH 3ターンを目標にします。
 
-Events MUST:
-
-
-
-\- be JSON-based
-
-\- use weighted probability
-
-\- support mods
-
-\- remain short and interpretable
-
-
-
-Event frequency MUST vary.
-
-
-
-Major events MUST be rare.
-
-
-
-\## Design
-
-
-
-Event structure:
-
-
-
-\- conditions
-
-\- weight
-
-\- effects
-
-\- text template
-
-
-
-Categories:
-
-
-
-\- daily
-
-\- relationship
-
-\- turning point
-
-\- world
-
-
-
-Relationship changes target approximately MTTH 3 turns.
-
-
-
-Logs should remain concise.
-
+ログは簡潔に保ちます。

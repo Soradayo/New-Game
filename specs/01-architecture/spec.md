@@ -1,90 +1,45 @@
-\# Architecture
+# アーキテクチャ
 
+## 概要
 
+ゲームは軽量でモジュール化されたアーキテクチャを使います。
 
-\## Overview
+ゲームロジックとコンテンツは分離します。
 
+アーキテクチャは、保守性、Mod対応、Codexのコンテキスト効率を重視します。
 
+## 要件
 
-The game uses a lightweight modular architecture.
+アーキテクチャは必ず次を満たします:
 
+- ゲームエンジンを避ける
+- コンポーネント化されている
+- ファイルを積極的に分割する
+- コンテンツとロジックを分離する
+- JSON-first content をサポートする
 
+## 設計
 
-Game logic and content are separated.
-
-
-
-The architecture prioritizes maintainability, mod support, and Codex context efficiency.
-
-
-
-\## Requirements
-
-
-
-The architecture MUST:
-
-
-
-\- avoid game engines
-
-\- be componentized
-
-\- split files aggressively
-
-\- separate content from logic
-
-\- support JSON-first content
-
-
-
-\## Design
-
-
-
-Suggested structure:
-
-
+推奨構成:
 
 src/
 
+- core/
+- systems/
+- ui/
+- data/
+- mods/
+- saves/
+- utils/
+- types/
 
+中核システム:
 
-\- core/
+- turn engine
+- event resolver
+- save system
+- NPC simulation
 
-\- systems/
+ゲームコンテンツはJSONに置きます。
 
-\- ui/
-
-\- data/
-
-\- mods/
-
-\- saves/
-
-\- utils/
-
-\- types/
-
-
-
-Core systems:
-
-
-
-\- turn engine
-
-\- event resolver
-
-\- save system
-
-\- NPC simulation
-
-
-
-Game content lives in JSON.
-
-
-
-Source code interprets content instead of hardcoding it.
-
+ソースコードは、コンテンツをハードコードするのではなく解釈します。

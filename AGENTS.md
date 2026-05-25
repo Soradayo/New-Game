@@ -1,278 +1,164 @@
-\# AGENTS.md
+# AI エージェント向け作業指示（PowerShell 5.1 / NoProfile）
 
+# 
 
+# \- 適用範囲: このファイルが置かれたフォルダ配下すべて。
 
-\## Project overview
+# 
 
+# \- UTF-8 実行ラッパ（必須・毎回付与）
 
+# &#x20; - 形式（`<COMMAND>` を実コマンドに置換）:
 
-This project is a browser-based, offline, text-driven life simulation game.
+# &#x20;   - `\[Console]::InputEncoding=\[Text.UTF8Encoding]::new($false); \[Console]::OutputEncoding=\[Text.UTF8Encoding]::new($false); $OutputEncoding=\[Text.UTF8Encoding]::new($false); chcp 65001 > $null; \& { <COMMAND> }`
 
+# 
 
+# \- ファイル書き込みの Encoding 指定（必須）
 
-The player lives through a full life in a near-modern fictional world inspired by industrialization, capitalism, religious institutions, and emerging revolutionary ideas.
+# &#x20; - `Out-File -Encoding utf8` / `Set-Content -Encoding utf8` / `Add-Content -Encoding utf8`
 
 
 
-The goal is not victory. The goal is interpretation of a life.
+# 
 
+# AGENTS.md
 
+## プロジェクト概要
 
-The project prioritizes replayability, causality, emergent storytelling, and mod support.
+このプロジェクトは、ブラウザで動作するオフライン対応のテキスト駆動ライフシミュレーションゲームです。
 
+プレイヤーは、産業化、資本主義、宗教制度、台頭する革命思想に影響を受けた、近代に近い架空世界で一生を過ごします。
 
+目的は勝利ではありません。ひとつの人生を解釈することです。
 
-\## Core philosophy
+このプロジェクトは、リプレイ性、因果、創発的な物語、Mod対応を重視します。
 
+## 中核思想
 
+優先すること:
 
-Prioritize:
+* プレイヤーによる解釈
+* リプレイ性
+* 因果
+* 創発的な物語
+* 軽量なアーキテクチャ
+* JSON-driven content
+* Modしやすさ
+* 保守性
+* 小さく再利用しやすいコンポーネント
 
+避けること:
 
+* ハードコードされた分岐ロジック
+* 巨大なファイル
+* 過剰な継承
+* 現実らしさのための複雑すぎるシミュレーション
+* 不要な抽象化
+* ゲームエンジン風の過剰設計
+* ランタイムAI生成コンテンツ
 
-\- player interpretation
+## 技術ルール
 
-\- replayability
+スタック:
 
-\- causality
+* TypeScript
+* React
+* Vite
+* Zustand
+* TailwindCSS
 
-\- emergent narratives
+ゲームは完全にオフラインで動作しなければなりません。
 
-\- lightweight architecture
+ゲームエンジンは導入しません。
 
-\- JSON-driven content
+コードはモジュール化し、小さなファイルに分割します。
 
-\- mod friendliness
+純粋関数を優先します。
 
-\- maintainability
+## Data-first architecture
 
-\- small reusable components
+ゲームコンテンツはデータ駆動でなければなりません。
 
+可能な限り、すべてのコンテンツはJSONに置きます。
 
+例:
 
-Avoid:
+* events
+* traits
+* organizations
+* nations
+* items
+* text templates
 
+ゲームコンテンツをソースコードにハードコードすることは避けます。
 
+ロジックはコンテンツを直接記述するのではなく、データを解釈します。
 
-\- hardcoded branching logic
+## Mod対応
 
-\- giant files
+Modは第一級の要件です。
 
-\- excessive inheritance
+Modはプレーンテキストエディタで作成できなければなりません。
 
-\- complex simulation for realism
+ModはJSONだけで作れるべきです。
 
-\- unnecessary abstraction
+MVPでは、Lua、JS実行、evalなどのスクリプト言語は使いません。
 
-\- engine-style overengineering
+ゲーム起動時に base data と mod data をマージします。
 
-\- AI-generated runtime content
+## イベントシステムのルール
 
+ネストした条件分岐より、重み付き計算を優先します。
 
+if/else の連鎖は避けます。
 
-\## Technical rules
+使用するもの:
 
+* conditions
+* weights
+* effects
+* templates
 
+イベントは解釈しやすく、短く、再利用しやすいものにします。
 
-Stack:
+結果を説明しすぎないようにします。
 
+プレイヤーの想像の余地を残します。
 
+## UI方針
 
-\- TypeScript
+テキストファーストのUIにします。
 
-\- React
+キャラクター画像は使いません。
 
-\- Vite
+数値はゲームプレイを支えますが、ログを主役にします。
 
-\- Zustand
+ログは簡潔に保ちます。
 
-\- TailwindCSS
+長すぎる散文は避けます。
 
+## 保存
 
+必須機能:
 
-The game must work fully offline.
+* autosave
+* import save
+* export save
 
+JSON export は必須です。
 
+version フィールドを使い、後方互換性を考慮します。
 
-Do not introduce game engines.
+## コーディングスタイル
 
+ファイルは小さく保ちます。
 
+責務は積極的に分割します。
 
-Keep code modular and split into small files.
+組み合わせ可能なシステムを優先します。
 
+「god class」は作りません。
 
-
-Prefer pure functions.
-
-
-
-\## Data-first architecture
-
-
-
-Game content MUST be data-driven.
-
-
-
-All content should live in JSON whenever possible.
-
-
-
-Examples:
-
-
-
-\- events
-
-\- traits
-
-\- organizations
-
-\- nations
-
-\- items
-
-\- text templates
-
-
-
-Avoid hardcoded game content in source code.
-
-
-
-Logic should interpret data rather than encode content.
-
-
-
-\## Mod support
-
-
-
-Modding is a first-class requirement.
-
-
-
-Mods must be creatable using plain text editors.
-
-
-
-Mods should require JSON only.
-
-
-
-No scripting language (Lua, JS execution, eval) for MVP.
-
-
-
-Game startup should merge base data + mod data.
-
-
-
-\## Event system rules
-
-
-
-Prefer weighted calculations over nested conditions.
-
-
-
-Avoid if/else chains.
-
-
-
-Use:
-
-
-
-\- conditions
-
-\- weights
-
-\- effects
-
-\- templates
-
-
-
-Events should be interpretable, short, and reusable.
-
-
-
-Do not over-explain outcomes.
-
-
-
-Leave room for player imagination.
-
-
-
-\## UI philosophy
-
-
-
-Text-first UI.
-
-
-
-No character graphics.
-
-
-
-Numbers support gameplay but logs are primary.
-
-
-
-Keep logs concise.
-
-
-
-Avoid long prose.
-
-
-
-\## Saving
-
-
-
-Must support:
-
-
-
-\- autosave
-
-\- import save
-
-\- export save
-
-
-
-JSON export is mandatory.
-
-
-
-Backward compatibility should be considered using version fields.
-
-
-
-\## Coding style
-
-
-
-Keep files small.
-
-
-
-Split responsibilities aggressively.
-
-
-
-Prefer composable systems.
-
-
-
-Never create “god classes”.
-
-
-
-Always think about Codex context efficiency.
+常に Codex のコンテキスト効率を意識します。
 

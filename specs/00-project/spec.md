@@ -1,94 +1,47 @@
-\# Project Overview
+# プロジェクト概要
 
+## 概要
 
+ブラウザで動作する、テキスト駆動のライフシミュレーションゲーム。
 
-\## Overview
+プレイヤーは、産業化、資本主義、宗教、台頭する革命思想に影響を受けた、近代に近い架空世界で幼年期から老年期までを生きます。
 
+プレイヤーは勝利を目指しているわけではありません。
 
+目的は、ひとつの人生を解釈することです。
 
-A browser-based text-driven life simulation game.
+失敗、苦しみ、貧困、死も体験の一部です。
 
+## 要件
 
+ゲームは必ず次を満たします:
 
-The player experiences a full life from childhood to old age in a fictional near-modern world inspired by industrialization, capitalism, religion, and emerging revolutionary ideologies.
+- single-player である
+- offline で動作する
+- 高いリプレイ性を持つ
+- 長期保存ファイルをサポートする
+- JSON-based mods をサポートする
+- runtime AI generation を避ける
+- システムを通じて創発的な物語を生む
 
+ゲームは次を目指します:
 
+- プレイヤーの想像を促す
+- 記憶に残る人生の軌跡を作る
+- 失敗に物語上の意味を持たせる
 
-The player is not trying to win.
+## 設計
 
-
-
-The purpose is to interpret a life.
-
-
-
-Failure, suffering, poverty, and death are part of the experience.
-
-
-
-\## Requirements
-
-
-
-The game MUST:
-
-
-
-\- be single-player
-
-\- run offline
-
-\- support high replayability
-
-\- support long-term save files
-
-\- support JSON-based mods
-
-\- avoid runtime AI generation
-
-\- generate emergent stories through systems
-
-
-
-The game SHOULD:
-
-
-
-\- encourage player imagination
-
-\- create memorable life trajectories
-
-\- make failure narratively meaningful
-
-
-
-\## Design
-
-
-
-Core loop:
-
-
+コアループ:
 
 observe → choose → consequence → interpretation
 
+ゲームは、作者が用意した一本道の物語よりもシステムを優先します。
 
+ゲームプレイを駆動するもの:
 
-The game prioritizes systems over authored narratives.
-
-
-
-Gameplay is driven by:
-
-
-
-\- weighted events
-
-\- relationships
-
-\- organizations
-
-\- social pressure
-
-\- gradual progression
-
+- weighted events
+- relationships
+- organizations
+- social pressure
+- gradual progression

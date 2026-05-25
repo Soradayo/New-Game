@@ -1,0 +1,45 @@
+[
+  {
+    "id": "cautious",
+    "label": "慎重",
+    "description": "目立つことを避け、わずかな安定を守る。",
+    "effects": [
+      { "target": "money", "value": 1 }
+    ]
+  },
+  {
+    "id": "ambitious",
+    "label": "野心的",
+    "description": "梯子が混み合っていても、上を目指す。",
+    "effects": [
+      { "target": "stats.social", "value": 1 },
+      { "target": "world.pressure", "value": 1 }
+    ]
+  },
+  {
+    "id": "dutiful",
+    "label": "従順",
+    "description": "制度が求めることを行い、それを平穏と呼ぶ。",
+    "effects": [
+      { "target": "relationship.all", "value": 1 }
+    ]
+  },
+  {
+    "id": "rebellious",
+    "label": "反抗的",
+    "description": "取引を受け入れる前に、その条件を疑う。",
+    "effects": [
+      { "target": "stats.spirit", "value": 1 },
+      { "target": "world.pressure", "value": 2 }
+    ]
+  },
+  {
+    "id": "generous",
+    "label": "寛大",
+    "description": "つながりが細らないよう、持てるものを差し出す。",
+    "effects": [
+      { "target": "money", "value": -2 },
+      { "target": "relationship.all", "value": 2 }
+    ]
+  }
+]

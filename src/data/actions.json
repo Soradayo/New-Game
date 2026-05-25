@@ -1,0 +1,46 @@
+[
+  {
+    "id": "study",
+    "label": "学ぶ",
+    "description": "本、教師、道端の議論から知識を拾う。",
+    "effects": [
+      { "target": "stats.mind", "value": 2 },
+      { "target": "money", "value": -1 }
+    ]
+  },
+  {
+    "id": "work",
+    "label": "働く",
+    "description": "その時期に得られる仕事を引き受ける。",
+    "effects": [
+      { "target": "money", "value": 5 },
+      { "target": "stats.body", "value": 1 }
+    ]
+  },
+  {
+    "id": "socialize",
+    "label": "交流する",
+    "description": "話を聞き、頼みを交わし、記憶に残る人になる。",
+    "effects": [
+      { "target": "stats.social", "value": 2 },
+      { "target": "relationship.all", "value": 1 }
+    ]
+  },
+  {
+    "id": "practice",
+    "label": "鍛錬する",
+    "description": "手が覚えるまで、有用な技を繰り返す。",
+    "effects": [
+      { "target": "stats.craft", "value": 2 }
+    ]
+  },
+  {
+    "id": "reflect",
+    "label": "内省する",
+    "description": "人生が何をしているのか見えるまで、静かに考える。",
+    "effects": [
+      { "target": "stats.spirit", "value": 2 },
+      { "target": "world.pressure", "value": -1 }
+    ]
+  }
+]

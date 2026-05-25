@@ -1,84 +1,42 @@
-\# Save and Mod System
+# 保存とModシステム
 
+## 概要
 
+保存の可搬性とMod対応は第一級の機能です。
 
-\## Overview
+## 要件
 
+保存システムは必ず次をサポートします:
 
+- autosave
+- import
+- export
 
-Save portability and modding are first-class features.
+JSON export は必須です。
 
+Modは必ず次を満たします:
 
+- JSON-only である
+- テキストエディタで扱える
+- 動的に読み込める
 
-\## Requirements
+## 設計
 
-
-
-Save system MUST support:
-
-
-
-\- autosave
-
-\- import
-
-\- export
-
-
-
-JSON export is mandatory.
-
-
-
-Mods MUST:
-
-
-
-\- be JSON-only
-
-\- work with text editors
-
-\- load dynamically
-
-
-
-\## Design
-
-
-
-Save example:
-
-
+保存例:
 
 {
-
-&#x20; "version": "0.1",
-
-&#x20; "player": {},
-
-&#x20; "world": {},
-
-&#x20; "history": \[],
-
-&#x20; "turn": 0
-
+  "version": "0.1",
+  "player": {},
+  "world": {},
+  "history": [],
+  "turn": 0
 }
-
-
 
 Mods:
 
-
-
 mods/
 
-
-
-\- my\_mod/
-
-&#x20; - events.json
-
-&#x20; - items.json
-
-&#x20; - traits.json
-
+- my_mod/
+  - events.json
+  - items.json
+  - traits.json

@@ -1,104 +1,52 @@
-\# UI
+# UI
 
+## 概要
 
+UIはテキストファーストです。
 
-\## Overview
+キャラクターグラフィックは意図的に除外します。
 
+## 要件
 
+UIは必ず次を表示します:
 
-UI is text-first.
+- character information
+- stats
+- event logs
+- actions
+- relationships
 
+## 設計
 
+上部:
 
-Character graphics are intentionally excluded.
+- name
+- age
+- class
+- affiliation
+- money
 
+左:
 
+- abilities
 
-\## Requirements
+中央:
 
+- logs
 
+下部:
 
-UI MUST display:
+- actions
+- stance
 
+右:
 
+- relationships
 
-\- character information
+タブ:
 
-\- stats
-
-\- event logs
-
-\- actions
-
-\- relationships
-
-
-
-\## Design
-
-
-
-Top:
-
-
-
-\- name
-
-\- age
-
-\- class
-
-\- affiliation
-
-\- money
-
-
-
-Left:
-
-
-
-\- abilities
-
-
-
-Center:
-
-
-
-\- logs
-
-
-
-Bottom:
-
-
-
-\- actions
-
-\- stance
-
-
-
-Right:
-
-
-
-\- relationships
-
-
-
-Tabs:
-
-
-
-\- history
-
-\- relationships
-
-\- organization
-
-\- inventory
-
-\- world state
-
+- history
+- relationships
+- organization
+- inventory
+- world state
