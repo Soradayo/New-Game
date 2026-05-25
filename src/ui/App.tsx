@@ -2,11 +2,15 @@ import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { getLifePhase } from "../core/lifePhase";
 import { useGameStore } from "../core/useGameStore";
-import type { AbilityKey, LifePhase } from "../types/game";
+import { createModTemplateJson } from "../mods/createModTemplate";
+import { getChoiceAvailability, getPendingTurningPoint } from "../systems/turningPoints";
+import type { AbilityKey, LifePhase, TurningPointDefinition } from "../types/game";
 import {
   abilityLabels,
+  careerCategoryLabels,
   categoryLabels,
   classLabels,
+  educationLevelLabels,
   formatMonthsAsAge,
   lifePhaseLabels,
   organizationKindLabels,
@@ -24,13 +28,32 @@ const tabLabels: Record<(typeof tabs)[number], string> = {
 };
 
 export function App() {
-  const { data, state, error, setAction, setStance, nextTurn, reset, exportJson, importJson, importModJson } =
-    useGameStore();
+  const {
+    data,
+    state,
+    error,
+    setAction,
+    setStance,
+    nextTurn,
+    chooseTurningPoint,
+    reset,
+    exportJson,
+    importJson,
+    importModJson,
+  } = useGameStore();
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("history");
+  const [isModPanelOpen, setIsModPanelOpen] = useState(false);
+  const [modDraft, setModDraft] = useState("");
   const saveInputRef = useRef<HTMLInputElement>(null);
   const modInputRef = useRef<HTMLInputElement>(null);
   const lifePhase = getLifePhase(state.player.ageMonths);
   const visibleLogs = useMemo(() => state.history.slice(0, 5), [state.history]);
+  const pendingTurningPoint = getPendingTurningPoint(state, data);
+
+  const createTemplate = () => {
+    setModDraft(createModTemplateJson());
+    setIsModPanelOpen(true);
+  };
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -67,7 +90,8 @@ export function App() {
                     <span className="text-zinc-400">{relationship.bond.toFixed(0)}</span>
                   </div>
                   <div className="text-xs text-zinc-500">
-                    {roleLabels[relationship.role] ?? relationship.role}
+                    {roleLabels[relationship.role] ?? relationship.role} /{" "}
+                    {careerCategoryLabels[relationship.careerCategory]}
                   </div>
                 </div>
               ))}
@@ -75,7 +99,12 @@ export function App() {
           </Panel>
         </div>
 
-        <section className="grid gap-4">
+        <section className="controls-area grid gap-4">
+          {pendingTurningPoint ? (
+            <div className="turning-panel-overlay">
+              <TurningPointPanel turningPoint={pendingTurningPoint} onChoose={chooseTurningPoint} />
+            </div>
+          ) : null}
           <ChoiceGroup
             label="行動"
             value={state.selectedActionId}
@@ -89,12 +118,24 @@ export function App() {
             onChange={setStance}
           />
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <button className="primary-button" onClick={nextTurn}>次の期間へ</button>
+            <button className="primary-button" disabled={Boolean(pendingTurningPoint)} onClick={nextTurn}>
+              次の期間へ
+            </button>
             <button className="secondary-button" onClick={reset}>最初から</button>
             <button className="secondary-button" onClick={() => downloadSave(exportJson())}>保存を書き出す</button>
             <button className="secondary-button" onClick={() => saveInputRef.current?.click()}>保存を読み込む</button>
-            <button className="secondary-button" onClick={() => modInputRef.current?.click()}>Modを読み込む</button>
+            <button className="secondary-button" onClick={() => setIsModPanelOpen((value) => !value)}>Mod</button>
           </div>
+          {isModPanelOpen ? (
+            <ModPanel
+              draft={modDraft}
+              onDraftChange={setModDraft}
+              onCreateTemplate={createTemplate}
+              onExport={() => downloadJson(modDraft || createModTemplateJson(), "new-game-mod-template.jsonc")}
+              onImportDraft={() => importModJson(modDraft)}
+              onImportFile={() => modInputRef.current?.click()}
+            />
+          ) : null}
         </section>
 
         <section className="rounded border border-zinc-800 bg-zinc-900/70">
@@ -116,15 +157,19 @@ export function App() {
           ref={saveInputRef}
           className="hidden"
           type="file"
-          accept="application/json,.json"
+          accept="application/json,.json,.jsonc"
           onChange={(event) => readFile(event.currentTarget.files?.[0], importJson)}
         />
         <input
           ref={modInputRef}
           className="hidden"
           type="file"
-          accept="application/json,.json"
-          onChange={(event) => readFile(event.currentTarget.files?.[0], importModJson)}
+          accept="application/json,.json,.jsonc"
+          onChange={(event) => readFile(event.currentTarget.files?.[0], (raw) => {
+            setModDraft(raw);
+            setIsModPanelOpen(true);
+            importModJson(raw);
+          })}
         />
       </section>
     </main>
@@ -135,11 +180,12 @@ function Header({ lifePhase }: { lifePhase: LifePhase }) {
   const state = useGameStore((store) => store.state);
 
   return (
-    <header className="grid gap-3 rounded border border-zinc-800 bg-zinc-900 px-4 py-3 md:grid-cols-5">
+    <header className="grid gap-3 rounded border border-zinc-800 bg-zinc-900 px-4 py-3 md:grid-cols-6">
       <HeaderItem label="名前" value={state.player.name} />
       <HeaderItem label="年齢" value={`${formatMonthsAsAge(state.player.ageMonths)} / ${lifePhaseLabels[lifePhase]}`} />
       <HeaderItem label="階級" value={classLabels[state.player.socialClass]} />
-      <HeaderItem label="所属" value={state.player.affiliation} />
+      <HeaderItem label="教育" value={educationLevelLabels[state.player.educationLevel]} />
+      <HeaderItem label="職域" value={careerCategoryLabels[state.player.careerCategory]} />
       <HeaderItem label="所持金" value={`${state.player.money.toFixed(0)}コイン`} />
     </header>
   );
@@ -178,6 +224,92 @@ function AbilityList({ stats }: { stats: Record<AbilityKey, number> }) {
         </div>
       ))}
     </div>
+  );
+}
+
+function TurningPointPanel({
+  turningPoint,
+  onChoose,
+}: {
+  turningPoint: TurningPointDefinition;
+  onChoose: (choiceId: string) => void;
+}) {
+  const state = useGameStore((store) => store.state);
+
+  return (
+    <section className="turning-panel">
+      <div>
+        <div className="text-xs text-zinc-500">転機</div>
+        <h2 className="mt-1 text-lg font-bold">{turningPoint.label}</h2>
+        <p className="mt-2 text-sm leading-6 text-zinc-300">{turningPoint.description}</p>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {turningPoint.choices.map((choice) => {
+          const availability = getChoiceAvailability(state, choice);
+
+          return (
+            <button
+              key={choice.id}
+              type="button"
+              className={`turning-choice ${availability.available ? "" : "turning-choice-disabled"}`}
+              disabled={!availability.available}
+              onClick={() => onChoose(choice.id)}
+            >
+              <span className="block text-sm font-bold">{choice.label}</span>
+              <span className="mt-2 block text-xs leading-5 text-zinc-400">{choice.description}</span>
+              <span className="mt-3 block text-xs leading-5">{choice.outcomeSummary}</span>
+              {!availability.available ? (
+                <span className="mt-3 block text-xs text-zinc-500">
+                  選べない: {availability.reasons.join(" / ")}
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ModPanel({
+  draft,
+  onDraftChange,
+  onCreateTemplate,
+  onExport,
+  onImportDraft,
+  onImportFile,
+}: {
+  draft: string;
+  onDraftChange: (value: string) => void;
+  onCreateTemplate: () => void;
+  onExport: () => void;
+  onImportDraft: () => void;
+  onImportFile: () => void;
+}) {
+  return (
+    <section className="mod-panel">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-bold">Mod</h2>
+          <p className="mt-1 text-xs leading-5 text-zinc-400">
+            テンプレートを作成し、JSONとして書き出すか、この欄の内容をそのまま読み込めます。
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button className="secondary-button" type="button" onClick={onCreateTemplate}>テンプレート作成</button>
+          <button className="secondary-button" type="button" onClick={onExport}>エクスポート</button>
+          <button className="secondary-button" type="button" onClick={onImportDraft} disabled={!draft.trim()}>この内容を読み込む</button>
+          <button className="secondary-button" type="button" onClick={onImportFile}>ファイルを読み込む</button>
+        </div>
+      </div>
+      <textarea
+        className="mod-editor"
+        spellCheck={false}
+        value={draft}
+        onChange={(event) => onDraftChange(event.currentTarget.value)}
+        placeholder="テンプレート作成を押すと、Mod JSONの雛形が入ります。"
+      />
+    </section>
   );
 }
 
@@ -224,6 +356,9 @@ function TabContent({ activeTab }: { activeTab: (typeof tabs)[number] }) {
             <div className="font-medium">{relationship.name}</div>
             <div className="text-sm text-zinc-500">{roleLabels[relationship.role] ?? relationship.role}</div>
             <div className="mt-2 text-sm">絆 {relationship.bond.toFixed(0)}</div>
+            <div className="mt-1 text-xs text-zinc-500">
+              {educationLevelLabels[relationship.educationLevel]} / {careerCategoryLabels[relationship.careerCategory]}
+            </div>
           </div>
         ))}
       </div>
@@ -274,7 +409,7 @@ function TabContent({ activeTab }: { activeTab: (typeof tabs)[number] }) {
     <div className="max-h-72 space-y-3 overflow-auto p-4">
       {state.history.map((entry) => (
         <p key={entry.id} className="text-sm leading-6 text-zinc-300">
-          <span className="text-zinc-500">第{entry.turn}期:</span> {entry.text}
+          <span className="text-zinc-500">第{entry.turn}期</span> {entry.text}
         </p>
       ))}
     </div>
@@ -290,11 +425,15 @@ function ErrorBanner({ message }: { message: string }) {
 }
 
 function downloadSave(json: string) {
+  downloadJson(json, "new-game-save-ja.json");
+}
+
+function downloadJson(json: string, filename: string) {
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "new-game-save-ja.json";
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
 }

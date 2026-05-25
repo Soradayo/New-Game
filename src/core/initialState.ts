@@ -9,12 +9,16 @@ export function createInitialState(data: GameData): GameState {
     turn: 0,
     selectedActionId: data.actions[0]?.id ?? "study",
     selectedStanceId: data.stances[0]?.id ?? "cautious",
+    pendingTurningPoint: null,
     player: {
       name: playerName,
       ageMonths: 72,
       socialClass: "worker",
       affiliation: "なし",
       money: 12,
+      educationLevel: "primary",
+      careerCategory: "none",
+      lifeTags: [],
       stats: {
         body: 10,
         mind: 10,
@@ -29,11 +33,11 @@ export function createInitialState(data: GameData): GameState {
       nationArchetype: "商業国家",
       region: "industrial",
       organizations: {
-        state: "市民登記局",
+        state: "市民登録局",
         corporation: "メロウ工業",
-        academia: "ロー・ホール学院",
+        academia: "ローレル学院",
         religion: "灯火教会",
-        underground: "赤い糸",
+        underground: "赤い坑",
       },
       pressure: 12,
     },
@@ -56,5 +60,9 @@ function createInitialRelationships(data: GameData): Relationship[] {
     name: `${data.names.given[index + 1] ?? "レン"} ${data.names.family[index + 1] ?? "ヴェイル"}`,
     role,
     bond: 10 - index * 3,
+    ageMonths: 72 + index * 12,
+    educationLevel: "primary",
+    careerCategory: "none",
+    lifeTags: [],
   }));
 }

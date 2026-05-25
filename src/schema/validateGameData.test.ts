@@ -37,4 +37,22 @@ describe("game data schema validation", () => {
       ],
     }))).toThrow("/actions/0/effects/0/target");
   });
+
+  it("rejects a mod with an invalid turning point choice career category", () => {
+    const baseTurningPoint = baseGameData.turningPoints[0];
+
+    expect(() => parseMod(JSON.stringify({
+      turningPoints: [
+        {
+          ...baseTurningPoint,
+          choices: [
+            {
+              ...baseTurningPoint.choices[0],
+              careerCategory: "pirate",
+            },
+          ],
+        },
+      ],
+    }))).toThrow("/turningPoints/0/choices/0/careerCategory");
+  });
 });

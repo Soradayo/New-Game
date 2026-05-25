@@ -106,6 +106,13 @@ input:focus-visible {
     box-shadow: 3px 3px 0 #777;
   }
 
+  .primary-button:disabled {
+    cursor: not-allowed;
+    color: #777;
+    border-color: #777;
+    box-shadow: none;
+  }
+
   .secondary-button {
     @apply border-2 border-white bg-black px-3 py-2 text-sm font-bold text-white transition;
     border-radius: 0;
@@ -114,6 +121,12 @@ input:focus-visible {
   .secondary-button:hover {
     background: #fff;
     color: #000;
+  }
+
+  .secondary-button:disabled {
+    cursor: not-allowed;
+    color: #777;
+    border-color: #777;
   }
 
   .choice-button {
@@ -152,6 +165,46 @@ input:focus-visible {
   .tab-button-active {
     @apply bg-white text-black;
   }
+
+  .turning-panel {
+    @apply border-2 border-white bg-black p-4 text-white;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 #777;
+    width: 100%;
+    min-height: 100%;
+  }
+
+  .turning-choice {
+    @apply border-2 border-white bg-black p-3 text-left text-white transition;
+    border-radius: 0;
+    min-height: 150px;
+  }
+
+  .turning-choice:hover:not(:disabled) {
+    background: #fff;
+    color: #000;
+  }
+
+  .turning-choice:hover:not(:disabled) span {
+    color: #000 !important;
+  }
+
+  .turning-choice-disabled {
+    @apply cursor-not-allowed border-zinc-500 text-zinc-500;
+    opacity: 0.65;
+  }
+
+  .mod-panel {
+    @apply border-2 border-white bg-black p-3 text-white;
+    border-radius: 0;
+  }
+
+  .mod-editor {
+    @apply mt-3 min-h-80 w-full border-2 border-white bg-black p-3 text-xs leading-5 text-white;
+    border-radius: 0;
+    resize: vertical;
+    tab-size: 2;
+  }
 }
 
 main {
@@ -162,6 +215,19 @@ main {
 main > section {
   border-left: 2px solid #333;
   border-right: 2px solid #333;
+}
+
+.controls-area {
+  position: relative;
+}
+
+.turning-panel-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  background: #000;
 }
 
 header,

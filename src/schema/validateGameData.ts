@@ -9,9 +9,10 @@ import itemSchema from "../../docs/schema/item.schema.json";
 import namesSchema from "../../docs/schema/names.schema.json";
 import stanceSchema from "../../docs/schema/stance.schema.json";
 import traitSchema from "../../docs/schema/trait.schema.json";
+import turningPointSchema from "../../docs/schema/turning-point.schema.json";
 import type { GameData, ModData } from "../types/game";
 
-const baseRequiredFields = ["actions", "stances", "events", "items", "traits", "names"] as const;
+const baseRequiredFields = ["actions", "stances", "events", "items", "traits", "turningPoints", "names"] as const;
 
 const ajv = new Ajv2020({
   allErrors: true,
@@ -27,6 +28,7 @@ for (const schema of [
   eventSchema,
   itemSchema,
   traitSchema,
+  turningPointSchema,
   namesSchema,
 ]) {
   ajv.addSchema(schema);
@@ -68,7 +70,7 @@ export function parseAndValidateMod(raw: string): ModData {
   let parsed: unknown;
 
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(stripJsonComments(raw));
   } catch {
     throw new GameDataValidationError(["JSONとして読み込めません。"]);
   }
@@ -78,6 +80,58 @@ export function parseAndValidateMod(raw: string): ModData {
 
 function hasOwn(input: unknown, key: string): boolean {
   return typeof input === "object" && input !== null && Object.hasOwn(input, key);
+}
+
+export function stripJsonComments(input: string): string {
+  let output = "";
+  let inString = false;
+  let escaped = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const current = input[index];
+    const next = input[index + 1];
+
+    if (inString) {
+      output += current;
+
+      if (escaped) {
+        escaped = false;
+      } else if (current === "\\") {
+        escaped = true;
+      } else if (current === "\"") {
+        inString = false;
+      }
+
+      continue;
+    }
+
+    if (current === "\"") {
+      inString = true;
+      output += current;
+      continue;
+    }
+
+    if (current === "/" && next === "/") {
+      while (index < input.length && input[index] !== "\n") {
+        index += 1;
+      }
+      output += "\n";
+      continue;
+    }
+
+    if (current === "/" && next === "*") {
+      index += 2;
+      while (index < input.length && !(input[index] === "*" && input[index + 1] === "/")) {
+        index += 1;
+      }
+      index += 1;
+      continue;
+    }
+
+    output += current;
+  }
+
+  return output;
 }
 
 function formatValidationErrors(errors: ErrorObject[] | string[]): string {

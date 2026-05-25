@@ -3,6 +3,7 @@ import type { GameData, GameState, HistoryEntry } from "../types/game";
 import { makeSeed } from "../utils/rng";
 import { applyEffects } from "./effects";
 import { resolveEvent } from "./events";
+import { createTurningPointLog, resolveTurningPoint } from "./turningPoints";
 
 const regionLabels = {
   capital: "首都",
@@ -13,6 +14,8 @@ const regionLabels = {
 };
 
 export function advanceTurn(state: GameState, data: GameData): GameState {
+  if (state.pendingTurningPoint) return state;
+
   const action = data.actions.find((item) => item.id === state.selectedActionId);
   const stance = data.stances.find((item) => item.id === state.selectedStanceId);
   const turn = state.turn + 1;
@@ -40,7 +43,7 @@ export function advanceTurn(state: GameState, data: GameData): GameState {
 
   const text = event
     ? renderTemplate(event.template, nextState)
-    : "誰かが名付けるほどの出来事もなく、その期間は過ぎていく。";
+    : "誰かが名付けるほどの出来事はなく、その期間は過ぎていく。";
 
   const log: HistoryEntry = {
     id: `turn-${turn}`,
@@ -51,9 +54,24 @@ export function advanceTurn(state: GameState, data: GameData): GameState {
     category: event?.category ?? "daily",
   };
 
-  return {
+  const stateWithLog = {
     ...nextState,
     history: [log, ...nextState.history].slice(0, 200),
+  };
+  const pendingTurningPoint = resolveTurningPoint(
+    stateWithLog,
+    data,
+    makeSeed(turn, "turning-point"),
+  );
+  const turningPointLog = pendingTurningPoint ? createTurningPointLog(pendingTurningPoint, data) : null;
+
+  return {
+    ...stateWithLog,
+    pendingTurningPoint,
+    history: [
+      ...(turningPointLog ? [turningPointLog] : []),
+      ...stateWithLog.history,
+    ].slice(0, 200),
   };
 }
 

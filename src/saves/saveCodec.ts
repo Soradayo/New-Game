@@ -1,6 +1,6 @@
 import type { GameState, SavePayload } from "../types/game";
 
-export const SAVE_VERSION = "0.2-ja";
+export const SAVE_VERSION = "0.3-ja";
 
 export function exportSave(state: GameState): string {
   const payload: SavePayload = {
@@ -27,6 +27,7 @@ export function importSave(raw: string): GameState {
     turn: parsed.turn ?? 0,
     selectedActionId: parsed.selectedActionId ?? "study",
     selectedStanceId: parsed.selectedStanceId ?? "cautious",
+    pendingTurningPoint: parsed.pendingTurningPoint ?? null,
     player: parsed.player,
     world: parsed.world,
     relationships: parsed.relationships ?? [],

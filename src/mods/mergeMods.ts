@@ -8,6 +8,7 @@ export function mergeGameData(base: GameData, mods: ModData[]): GameData {
     events: mergeById(data.events, mod.events),
     items: mergeById(data.items, mod.items),
     traits: mergeById(data.traits, mod.traits),
+    turningPoints: mergeById(data.turningPoints, mod.turningPoints),
     names: {
       given: [...data.names.given, ...(mod.names?.given ?? [])],
       family: [...data.names.family, ...(mod.names?.family ?? [])],

@@ -14,6 +14,24 @@ export type AbilityKey =
 
 export type SocialClass = "lower" | "worker" | "middle" | "upper" | "special";
 
+export type EducationLevel =
+  | "none"
+  | "primary"
+  | "secondary"
+  | "vocational"
+  | "higher"
+  | "nightSchool";
+
+export type CareerCategory =
+  | "none"
+  | "labor"
+  | "clerical"
+  | "academic"
+  | "religious"
+  | "state"
+  | "underground"
+  | "mercantile";
+
 export type Region =
   | "capital"
   | "industrial"
@@ -36,6 +54,9 @@ export interface Player {
   socialClass: SocialClass;
   affiliation: string;
   money: number;
+  educationLevel: EducationLevel;
+  careerCategory: CareerCategory;
+  lifeTags: string[];
   stats: Stats;
   inventory: string[];
 }
@@ -45,6 +66,10 @@ export interface Relationship {
   name: string;
   role: string;
   bond: number;
+  ageMonths: number;
+  educationLevel: EducationLevel;
+  careerCategory: CareerCategory;
+  lifeTags: string[];
 }
 
 export interface WorldState {
@@ -69,6 +94,7 @@ export interface GameState {
   turn: number;
   selectedActionId: string;
   selectedStanceId: string;
+  pendingTurningPoint: PendingTurningPoint | null;
   player: Player;
   world: WorldState;
   relationships: Relationship[];
@@ -119,6 +145,56 @@ export interface EventDefinition {
   template: string;
 }
 
+export interface AgeWindow {
+  minMonths: number;
+  maxMonths: number;
+  guaranteedByMonths: number;
+}
+
+export interface ChoiceRequirement {
+  condition: Condition;
+  reason: string;
+}
+
+export interface NpcOutcome {
+  role: string;
+  educationLevel?: EducationLevel;
+  careerCategory?: CareerCategory;
+  grantsTags?: string[];
+  bond?: number;
+  log?: string;
+}
+
+export interface TurningPointChoice {
+  id: string;
+  label: string;
+  description: string;
+  requirements: ChoiceRequirement[];
+  outcomeSummary: string;
+  effects: Effect[];
+  grantsTags: string[];
+  educationLevel?: EducationLevel;
+  careerCategory?: CareerCategory;
+  npcOutcomes?: NpcOutcome[];
+}
+
+export interface TurningPointDefinition {
+  id: string;
+  label: string;
+  description: string;
+  category: "education" | "career" | "relationship" | "world";
+  weight: number;
+  ageWindow: AgeWindow;
+  conditions: Condition[];
+  choices: TurningPointChoice[];
+}
+
+export interface PendingTurningPoint {
+  id: string;
+  turn: number;
+  ageMonths: number;
+}
+
 export interface ItemDefinition {
   id: string;
   label: string;
@@ -146,6 +222,7 @@ export interface GameData {
   events: EventDefinition[];
   items: ItemDefinition[];
   traits: TraitDefinition[];
+  turningPoints: TurningPointDefinition[];
   names: NameData;
 }
 
@@ -155,5 +232,6 @@ export interface ModData {
   events?: EventDefinition[];
   items?: ItemDefinition[];
   traits?: TraitDefinition[];
+  turningPoints?: TurningPointDefinition[];
   names?: Partial<NameData>;
 }

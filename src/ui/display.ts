@@ -1,5 +1,7 @@
 import type {
   AbilityKey,
+  CareerCategory,
+  EducationLevel,
   EventDefinition,
   LifePhase,
   OrganizationKind,
@@ -21,6 +23,26 @@ export const abilityLabels: Record<AbilityKey, string> = {
   craft: "技能",
   social: "社交",
   spirit: "精神",
+};
+
+export const educationLevelLabels: Record<EducationLevel, string> = {
+  none: "未就学",
+  primary: "初等教育",
+  secondary: "中等教育",
+  vocational: "専門教育",
+  higher: "高等教育",
+  nightSchool: "夜学",
+};
+
+export const careerCategoryLabels: Record<CareerCategory, string> = {
+  none: "なし",
+  labor: "労働",
+  clerical: "事務",
+  academic: "学術",
+  religious: "宗教",
+  state: "官吏",
+  underground: "地下活動",
+  mercantile: "商業",
 };
 
 export const classLabels: Record<SocialClass, string> = {

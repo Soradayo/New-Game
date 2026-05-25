@@ -9,7 +9,7 @@ describe("mod merging", () => {
         {
           id: "quiet",
           label: "寡黙",
-          description: "言葉より沈黙を選ぶ。",
+          description: "言葉よりも沈黙を選ぶ。",
           tags: ["temperament"],
           effects: [
             { target: "stats.spirit", value: 1 },
@@ -23,7 +23,7 @@ describe("mod merging", () => {
     expect(merged.traits.some((trait) => trait.id === "quiet")).toBe(true);
   });
 
-  it("replaces base entries with matching mod ids", () => {
+  it("replaces base traits with matching mod ids", () => {
     const mod = parseMod(JSON.stringify({
       traits: [
         {
@@ -43,5 +43,23 @@ describe("mod merging", () => {
 
     expect(trait?.label).toBe("鋭い観察眼");
     expect(merged.traits.filter((entry) => entry.id === "observant")).toHaveLength(1);
+  });
+
+  it("merges and replaces turning points from mods", () => {
+    const baseTurningPoint = baseGameData.turningPoints[0];
+    const mod = parseMod(JSON.stringify({
+      turningPoints: [
+        {
+          ...baseTurningPoint,
+          label: "Modの転機",
+        },
+      ],
+    }));
+
+    const merged = mergeGameData(baseGameData, [mod]);
+    const turningPoint = merged.turningPoints.find((entry) => entry.id === baseTurningPoint.id);
+
+    expect(turningPoint?.label).toBe("Modの転機");
+    expect(merged.turningPoints.filter((entry) => entry.id === baseTurningPoint.id)).toHaveLength(1);
   });
 });

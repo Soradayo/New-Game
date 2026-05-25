@@ -3,6 +3,7 @@ import { createInitialState } from "./initialState";
 import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn } from "../systems/turnEngine";
+import { applyTurningPointChoice } from "../systems/turningPoints";
 import { parseMod } from "../mods/mergeMods";
 import type { GameData, GameState } from "../types/game";
 
@@ -15,6 +16,7 @@ interface GameStore {
   setAction: (actionId: string) => void;
   setStance: (stanceId: string) => void;
   nextTurn: () => void;
+  chooseTurningPoint: (choiceId: string) => void;
   reset: () => void;
   exportJson: () => string;
   importJson: (raw: string) => void;
@@ -35,6 +37,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const next = advanceTurn(get().state, get().data);
     persistState(next);
     set({ state: next, error: null });
+  },
+  chooseTurningPoint: (choiceId) => {
+    try {
+      const next = applyTurningPointChoice(get().state, get().data, choiceId);
+      persistState(next);
+      set({ state: next, error: null });
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : "転機の選択に失敗しました。" });
+    }
   },
   reset: () => {
     const next = createInitialState(get().data);
