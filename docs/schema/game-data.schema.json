@@ -1,0 +1,38 @@
+{
+  "$id": "https://new-game.local/schema/game-data.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Game Data or Mod Data",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/action.schema.json" }
+    },
+    "stances": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/stance.schema.json" }
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/event.schema.json" }
+    },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/item.schema.json" }
+    },
+    "traits": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/trait.schema.json" }
+    },
+    "names": {
+      "$ref": "https://new-game.local/schema/names.schema.json"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$"
+    }
+  }
+}

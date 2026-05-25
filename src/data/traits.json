@@ -1,0 +1,22 @@
+[
+  {
+    "id": "observant",
+    "label": "観察眼",
+    "description": "人の沈黙や街の変化に気づきやすい。",
+    "tags": ["perception", "social"],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "stats.social", "value": 1 }
+    ]
+  },
+  {
+    "id": "stubborn",
+    "label": "頑固",
+    "description": "折れにくいが、折れる前に周囲を傷つけることがある。",
+    "tags": ["temperament"],
+    "effects": [
+      { "target": "stats.spirit", "value": 2 },
+      { "target": "relationship.all", "value": -1 }
+    ]
+  }
+]

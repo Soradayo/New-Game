@@ -1,0 +1,37 @@
+{
+  "$id": "https://new-game.local/schema/effect.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Effect",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["target", "value"],
+  "properties": {
+    "target": {
+      "anyOf": [
+        {
+          "enum": [
+            "money",
+            "world.pressure",
+            "stats.body",
+            "stats.mind",
+            "stats.craft",
+            "stats.social",
+            "stats.spirit",
+            "relationship.all",
+            "inventory.add"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^relationship\\.[a-zA-Z0-9][a-zA-Z0-9-]*$"
+        }
+      ]
+    },
+    "value": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "minLength": 1 }
+      ]
+    }
+  }
+}

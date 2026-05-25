@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { getLifePhase } from "../core/lifePhase";
 import { useGameStore } from "../core/useGameStore";
-import { parseMod } from "../mods/mergeMods";
 import type { AbilityKey, LifePhase } from "../types/game";
 import {
   abilityLabels,
@@ -25,7 +24,7 @@ const tabLabels: Record<(typeof tabs)[number], string> = {
 };
 
 export function App() {
-  const { data, state, error, setAction, setStance, nextTurn, reset, exportJson, importJson, importMod } =
+  const { data, state, error, setAction, setStance, nextTurn, reset, exportJson, importJson, importModJson } =
     useGameStore();
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("history");
   const saveInputRef = useRef<HTMLInputElement>(null);
@@ -125,7 +124,7 @@ export function App() {
           className="hidden"
           type="file"
           accept="application/json,.json"
-          onChange={(event) => readFile(event.currentTarget.files?.[0], (raw) => importMod(parseMod(raw)))}
+          onChange={(event) => readFile(event.currentTarget.files?.[0], importModJson)}
         />
       </section>
     </main>

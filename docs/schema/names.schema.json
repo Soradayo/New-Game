@@ -1,0 +1,21 @@
+{
+  "$id": "https://new-game.local/schema/names.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Names",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "given": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "family": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "npcRoles": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" }
+    }
+  }
+}

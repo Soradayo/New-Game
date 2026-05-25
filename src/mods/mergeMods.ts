@@ -1,4 +1,5 @@
 import type { GameData, ModData } from "../types/game";
+import { parseAndValidateMod } from "../schema/validateGameData";
 
 export function mergeGameData(base: GameData, mods: ModData[]): GameData {
   return mods.reduce<GameData>((data, mod) => ({
@@ -6,6 +7,7 @@ export function mergeGameData(base: GameData, mods: ModData[]): GameData {
     stances: mergeById(data.stances, mod.stances),
     events: mergeById(data.events, mod.events),
     items: mergeById(data.items, mod.items),
+    traits: mergeById(data.traits, mod.traits),
     names: {
       given: [...data.names.given, ...(mod.names?.given ?? [])],
       family: [...data.names.family, ...(mod.names?.family ?? [])],
@@ -15,7 +17,7 @@ export function mergeGameData(base: GameData, mods: ModData[]): GameData {
 }
 
 export function parseMod(raw: string): ModData {
-  return JSON.parse(raw) as ModData;
+  return parseAndValidateMod(raw);
 }
 
 function mergeById<T extends { id: string }>(base: T[], additions: T[] = []): T[] {

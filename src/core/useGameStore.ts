@@ -3,7 +3,8 @@ import { createInitialState } from "./initialState";
 import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn } from "../systems/turnEngine";
-import type { GameData, GameState, ModData } from "../types/game";
+import { parseMod } from "../mods/mergeMods";
+import type { GameData, GameState } from "../types/game";
 
 const STORAGE_KEY = "new-game-save";
 
@@ -17,7 +18,7 @@ interface GameStore {
   reset: () => void;
   exportJson: () => string;
   importJson: (raw: string) => void;
-  importMod: (mod: ModData) => void;
+  importModJson: (raw: string) => void;
   clearError: () => void;
 }
 
@@ -50,23 +51,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ error: error instanceof Error ? error.message : "読み込みに失敗しました。" });
     }
   },
-  importMod: (mod) => {
-    const data = createContent([mod]);
-    const state = {
-      ...get().state,
-      history: [
-        {
-          id: `mod-${Date.now()}`,
-          turn: get().state.turn,
-          ageMonths: get().state.player.ageMonths,
-          text: "Modの記録が世界に折り込まれた。",
-          category: "world",
-        },
-        ...get().state.history,
-      ],
-    };
-    persistState(state);
-    set({ data, state, error: null });
+  importModJson: (raw) => {
+    try {
+      const mod = parseMod(raw);
+      const data = createContent([mod]);
+      const state = {
+        ...get().state,
+        history: [
+          {
+            id: `mod-${Date.now()}`,
+            turn: get().state.turn,
+            ageMonths: get().state.player.ageMonths,
+            text: "Modの記録が世界に折り込まれた。",
+            category: "world",
+          },
+          ...get().state.history,
+        ],
+      };
+      persistState(state);
+      set({ data, state, error: null });
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : "Modの読み込みに失敗しました。" });
+    }
   },
   clearError: () => set({ error: null }),
 }));

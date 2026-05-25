@@ -1,0 +1,17 @@
+{
+  "$id": "https://new-game.local/schema/stance.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Stance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "label", "description", "effects"],
+  "properties": {
+    "id": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" },
+    "label": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "effects": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/effect.schema.json" }
+    }
+  }
+}

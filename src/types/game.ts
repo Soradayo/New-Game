@@ -126,6 +126,14 @@ export interface ItemDefinition {
   effects: Effect[];
 }
 
+export interface TraitDefinition {
+  id: string;
+  label: string;
+  description: string;
+  tags: string[];
+  effects: Effect[];
+}
+
 export interface NameData {
   given: string[];
   family: string[];
@@ -137,6 +145,7 @@ export interface GameData {
   stances: Stance[];
   events: EventDefinition[];
   items: ItemDefinition[];
+  traits: TraitDefinition[];
   names: NameData;
 }
 
@@ -145,5 +154,6 @@ export interface ModData {
   stances?: Stance[];
   events?: EventDefinition[];
   items?: ItemDefinition[];
+  traits?: TraitDefinition[];
   names?: Partial<NameData>;
 }

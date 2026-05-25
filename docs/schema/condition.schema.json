@@ -1,0 +1,28 @@
+{
+  "$id": "https://new-game.local/schema/condition.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Condition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["target", "op", "value"],
+  "properties": {
+    "target": {
+      "enum": [
+        "ageMonths",
+        "money",
+        "world.pressure",
+        "stats.body",
+        "stats.mind",
+        "stats.craft",
+        "stats.social",
+        "stats.spirit"
+      ]
+    },
+    "op": {
+      "enum": ["gt", "gte", "lt", "lte", "eq"]
+    },
+    "value": {
+      "type": "number"
+    }
+  }
+}

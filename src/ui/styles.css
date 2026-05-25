@@ -5,14 +5,19 @@
 :root {
   color-scheme: dark;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+    "MS Gothic", "Yu Gothic", "Hiragino Sans", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, monospace;
+  background: #000;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background: #09090b;
+  background: #000;
 }
 
 button,
@@ -20,28 +25,170 @@ select {
   font: inherit;
 }
 
+button {
+  letter-spacing: 0;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #f2f2f2;
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border: 1px solid #f2f2f2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f2f2f2;
+  border: 3px solid #000;
+}
+
+@layer base {
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-900\/70,
+  .bg-zinc-900\/80,
+  .bg-zinc-800,
+  .bg-red-950 {
+    background-color: #000 !important;
+  }
+
+  .text-zinc-100,
+  .text-zinc-200,
+  .text-zinc-300 {
+    color: #f2f2f2 !important;
+  }
+
+  .text-zinc-400,
+  .text-zinc-500 {
+    color: #9a9a9a !important;
+  }
+
+  .border-zinc-700,
+  .border-zinc-800,
+  .border-red-900 {
+    border-color: #f2f2f2 !important;
+  }
+
+  .rounded {
+    border-radius: 0 !important;
+  }
+
+  .bg-cyan-500 {
+    background-color: #f2f2f2 !important;
+  }
+}
+
 @layer components {
   .primary-button {
-    @apply rounded border border-cyan-400 bg-cyan-500 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-300;
+    @apply border-2 border-white bg-black px-5 py-2 text-sm font-bold text-white transition;
+    border-radius: 0;
+    box-shadow: 5px 5px 0 #777;
+    text-transform: uppercase;
+  }
+
+  .primary-button:hover {
+    background: #fff;
+    color: #000;
+    box-shadow: 3px 3px 0 #777;
   }
 
   .secondary-button {
-    @apply rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-800;
+    @apply border-2 border-white bg-black px-3 py-2 text-sm font-bold text-white transition;
+    border-radius: 0;
+  }
+
+  .secondary-button:hover {
+    background: #fff;
+    color: #000;
   }
 
   .choice-button {
-    @apply min-h-24 rounded border border-zinc-700 bg-zinc-950 px-3 py-3 text-left text-zinc-100 transition hover:border-cyan-700 hover:bg-zinc-900;
+    @apply min-h-24 border-2 border-white bg-black px-3 py-3 text-left text-white transition;
+    border-radius: 0;
+    line-height: 1.65;
+  }
+
+  .choice-button:hover {
+    background: #151515;
   }
 
   .choice-button-active {
-    @apply border-cyan-400 bg-cyan-950/70 text-cyan-100 shadow-[0_0_0_1px_rgba(34,211,238,0.35)];
+    @apply border-white bg-white text-black;
+    box-shadow: inset 0 0 0 3px #000;
+  }
+
+  .choice-button-active span {
+    color: #000 !important;
+  }
+
+  .choice-button-active span:first-child::before {
+    content: "> ";
   }
 
   .tab-button {
-    @apply px-4 py-3 text-sm capitalize text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100;
+    @apply border-r-2 border-white px-4 py-3 text-sm text-white transition;
+    border-radius: 0;
+    text-transform: none;
+  }
+
+  .tab-button:hover {
+    background: #151515;
   }
 
   .tab-button-active {
-    @apply bg-zinc-800 text-cyan-200;
+    @apply bg-white text-black;
   }
+}
+
+main {
+  background: #000 !important;
+  color: #f2f2f2;
+}
+
+main > section {
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+
+header,
+section.rounded {
+  border-width: 2px !important;
+  box-shadow: none;
+}
+
+h2 {
+  color: #f2f2f2 !important;
+}
+
+article {
+  border-left-width: 2px !important;
+}
+
+article p::before {
+  content: "> ";
+  color: #f2f2f2;
+}
+
+.h-2.rounded.bg-zinc-800 {
+  height: 12px;
+  border: 1px solid #f2f2f2;
+  background: #000 !important;
+}
+
+.h-2.rounded.bg-zinc-800 > .h-2 {
+  height: 10px;
 }

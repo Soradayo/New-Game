@@ -1,0 +1,34 @@
+{
+  "$id": "https://new-game.local/schema/event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "category", "weight", "conditions", "effects", "template"],
+  "properties": {
+    "id": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" },
+    "category": {
+      "enum": ["daily", "relationship", "turningPoint", "world"]
+    },
+    "weight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "cooldownTurns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "conditions": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/condition.schema.json" }
+    },
+    "effects": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/effect.schema.json" }
+    },
+    "template": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
