@@ -4,11 +4,11 @@
   "title": "Item",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "label", "description", "effects"],
+  "required": ["id", "labelKey", "descriptionKey", "effects"],
   "properties": {
     "id": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" },
-    "label": { "type": "string", "minLength": 1 },
-    "description": { "type": "string", "minLength": 1 },
+    "labelKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
+    "descriptionKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
     "effects": {
       "type": "array",
       "items": { "$ref": "https://new-game.local/schema/effect.schema.json" }

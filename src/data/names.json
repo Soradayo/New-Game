@@ -1,5 +1,7 @@
 {
-  "given": ["イラ", "マーラ", "トヴィン", "セル", "リン", "アンカ"],
-  "family": ["ヴォス", "ケイド", "メロウ", "セン", "オレル", "ターン"],
-  "npcRoles": ["sibling", "neighbor", "mentor"]
+  "npcRoles": [
+    "sibling",
+    "neighbor",
+    "mentor"
+  ]
 }

@@ -1,8 +1,8 @@
-import type { GameData, ModData } from "../types/game";
+import type { ModData, RawGameData } from "../types/game";
 import { parseAndValidateMod } from "../schema/validateGameData";
 
-export function mergeGameData(base: GameData, mods: ModData[]): GameData {
-  return mods.reduce<GameData>((data, mod) => ({
+export function mergeGameData(base: RawGameData, mods: ModData[]): RawGameData {
+  return mods.reduce<RawGameData>((data, mod) => ({
     actions: mergeById(data.actions, mod.actions),
     stances: mergeById(data.stances, mod.stances),
     events: mergeById(data.events, mod.events),
@@ -10,9 +10,17 @@ export function mergeGameData(base: GameData, mods: ModData[]): GameData {
     traits: mergeById(data.traits, mod.traits),
     turningPoints: mergeById(data.turningPoints, mod.turningPoints),
     names: {
-      given: [...data.names.given, ...(mod.names?.given ?? [])],
-      family: [...data.names.family, ...(mod.names?.family ?? [])],
       npcRoles: [...data.names.npcRoles, ...(mod.names?.npcRoles ?? [])],
+    },
+    localisation: {
+      ja: {
+        ...(data.localisation?.ja ?? {}),
+        ...(mod.localisation?.ja ?? {}),
+      },
+      en: {
+        ...(data.localisation?.en ?? {}),
+        ...(mod.localisation?.en ?? {}),
+      },
     },
   }), base);
 }

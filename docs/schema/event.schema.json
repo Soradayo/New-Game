@@ -4,7 +4,7 @@
   "title": "Event",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "category", "weight", "conditions", "effects", "template"],
+  "required": ["id", "category", "weight", "conditions", "effects", "templateKey"],
   "properties": {
     "id": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" },
     "category": {
@@ -29,9 +29,6 @@
       "type": "array",
       "items": { "$ref": "https://new-game.local/schema/effect.schema.json" }
     },
-    "template": {
-      "type": "string",
-      "minLength": 1
-    }
+    "templateKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" }
   }
 }

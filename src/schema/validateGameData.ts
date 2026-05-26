@@ -6,11 +6,13 @@ import effectSchema from "../../docs/schema/effect.schema.json";
 import eventSchema from "../../docs/schema/event.schema.json";
 import gameDataSchema from "../../docs/schema/game-data.schema.json";
 import itemSchema from "../../docs/schema/item.schema.json";
+import localisationSchema from "../../docs/schema/localisation.schema.json";
 import namesSchema from "../../docs/schema/names.schema.json";
 import stanceSchema from "../../docs/schema/stance.schema.json";
 import traitSchema from "../../docs/schema/trait.schema.json";
 import turningPointSchema from "../../docs/schema/turning-point.schema.json";
-import type { GameData, ModData } from "../types/game";
+import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
+import type { ModData, RawGameData } from "../types/game";
 
 const baseRequiredFields = ["actions", "stances", "events", "items", "traits", "turningPoints", "names"] as const;
 
@@ -27,6 +29,7 @@ for (const schema of [
   stanceSchema,
   eventSchema,
   itemSchema,
+  localisationSchema,
   traitSchema,
   turningPointSchema,
   namesSchema,
@@ -43,11 +46,11 @@ export class GameDataValidationError extends Error {
   }
 }
 
-export function validateGameData(input: unknown, mode: "base"): GameData;
+export function validateGameData(input: unknown, mode: "base"): RawGameData;
 export function validateGameData(input: unknown, mode: "mod"): ModData;
-export function validateGameData(input: unknown, mode: "base" | "mod"): GameData | ModData {
+export function validateGameData(input: unknown, mode: "base" | "mod"): RawGameData | ModData {
   if (!validate) {
-    throw new GameDataValidationError(["JSONスキーマを読み込めませんでした。"]);
+    throw new GameDataValidationError([t(baseLocalisation[DEFAULT_LOCALE], "system.error.schemaMissing")]);
   }
 
   if (!validate(input)) {
@@ -58,12 +61,12 @@ export function validateGameData(input: unknown, mode: "base" | "mod"): GameData
     const missing = baseRequiredFields.filter((field) => !hasOwn(input, field));
     if (missing.length > 0) {
       throw new GameDataValidationError(
-        missing.map((field) => `base data に ${field} がありません。`),
+        missing.map((field) => t(baseLocalisation[DEFAULT_LOCALE], "system.error.missingBaseField", { field })),
       );
     }
   }
 
-  return input as GameData | ModData;
+  return input as RawGameData | ModData;
 }
 
 export function parseAndValidateMod(raw: string): ModData {
@@ -72,7 +75,7 @@ export function parseAndValidateMod(raw: string): ModData {
   try {
     parsed = JSON.parse(stripJsonComments(raw));
   } catch {
-    throw new GameDataValidationError(["JSONとして読み込めません。"]);
+    throw new GameDataValidationError([t(baseLocalisation[DEFAULT_LOCALE], "system.error.jsonParse")]);
   }
 
   return validateGameData(parsed, "mod");
@@ -135,7 +138,7 @@ export function stripJsonComments(input: string): string {
 }
 
 function formatValidationErrors(errors: ErrorObject[] | string[]): string {
-  if (errors.length === 0) return "データ形式が正しくありません。";
+  if (errors.length === 0) return t(baseLocalisation[DEFAULT_LOCALE], "system.error.invalidData");
 
   return errors
     .slice(0, 3)
@@ -149,5 +152,5 @@ function formatValidationError(error: ErrorObject): string {
     ? `${path}/${error.params.missingProperty}`
     : path;
 
-  return `${field}: ${error.message ?? "形式が正しくありません。"}`;
+  return `${field}: ${error.message ?? t(baseLocalisation[DEFAULT_LOCALE], "system.error.invalidFormat")}`;
 }

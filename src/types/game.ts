@@ -115,6 +115,12 @@ export interface Effect {
   value: number | string;
 }
 
+export type LocaleCode = "ja" | "en";
+
+export type LocalisationValue = string | string[];
+
+export type LocalisationPack = Record<string, LocalisationValue>;
+
 export interface Condition {
   target: "ageMonths" | "money" | "world.pressure" | `stats.${AbilityKey}`;
   op: "gt" | "gte" | "lt" | "lte" | "eq";
@@ -128,10 +134,24 @@ export interface GameAction {
   effects: Effect[];
 }
 
+export interface RawGameAction {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
+  effects: Effect[];
+}
+
 export interface Stance {
   id: string;
   label: string;
   description: string;
+  effects: Effect[];
+}
+
+export interface RawStance {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
   effects: Effect[];
 }
 
@@ -146,6 +166,17 @@ export interface EventDefinition {
   template: string;
 }
 
+export interface RawEventDefinition {
+  id: string;
+  category: EventDefinition["category"];
+  weight: number;
+  isMajor?: boolean;
+  cooldownTurns?: number;
+  conditions: Condition[];
+  effects: Effect[];
+  templateKey: string;
+}
+
 export interface AgeWindow {
   minMonths: number;
   maxMonths: number;
@@ -157,6 +188,11 @@ export interface ChoiceRequirement {
   reason: string;
 }
 
+export interface RawChoiceRequirement {
+  condition: Condition;
+  reasonKey: string;
+}
+
 export interface NpcOutcome {
   role: string;
   educationLevel?: EducationLevel;
@@ -164,6 +200,15 @@ export interface NpcOutcome {
   grantsTags?: string[];
   bond?: number;
   log?: string;
+}
+
+export interface RawNpcOutcome {
+  role: string;
+  educationLevel?: EducationLevel;
+  careerCategory?: CareerCategory;
+  grantsTags?: string[];
+  bond?: number;
+  logKey?: string;
 }
 
 export interface TurningPointChoice {
@@ -179,6 +224,19 @@ export interface TurningPointChoice {
   npcOutcomes?: NpcOutcome[];
 }
 
+export interface RawTurningPointChoice {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
+  requirements: RawChoiceRequirement[];
+  outcomeSummaryKey: string;
+  effects: Effect[];
+  grantsTags: string[];
+  educationLevel?: EducationLevel;
+  careerCategory?: CareerCategory;
+  npcOutcomes?: RawNpcOutcome[];
+}
+
 export interface TurningPointDefinition {
   id: string;
   label: string;
@@ -188,6 +246,17 @@ export interface TurningPointDefinition {
   ageWindow: AgeWindow;
   conditions: Condition[];
   choices: TurningPointChoice[];
+}
+
+export interface RawTurningPointDefinition {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
+  category: TurningPointDefinition["category"];
+  weight: number;
+  ageWindow: AgeWindow;
+  conditions: Condition[];
+  choices: RawTurningPointChoice[];
 }
 
 export interface PendingTurningPoint {
@@ -203,6 +272,13 @@ export interface ItemDefinition {
   effects: Effect[];
 }
 
+export interface RawItemDefinition {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
+  effects: Effect[];
+}
+
 export interface TraitDefinition {
   id: string;
   label: string;
@@ -211,9 +287,21 @@ export interface TraitDefinition {
   effects: Effect[];
 }
 
+export interface RawTraitDefinition {
+  id: string;
+  labelKey: string;
+  descriptionKey: string;
+  tags: string[];
+  effects: Effect[];
+}
+
 export interface NameData {
   given: string[];
   family: string[];
+  npcRoles: string[];
+}
+
+export interface RawNameData {
   npcRoles: string[];
 }
 
@@ -225,14 +313,27 @@ export interface GameData {
   traits: TraitDefinition[];
   turningPoints: TurningPointDefinition[];
   names: NameData;
+  localisation: LocalisationPack;
 }
 
 export interface ModData {
-  actions?: GameAction[];
-  stances?: Stance[];
-  events?: EventDefinition[];
-  items?: ItemDefinition[];
-  traits?: TraitDefinition[];
-  turningPoints?: TurningPointDefinition[];
-  names?: Partial<NameData>;
+  actions?: RawGameAction[];
+  stances?: RawStance[];
+  events?: RawEventDefinition[];
+  items?: RawItemDefinition[];
+  traits?: RawTraitDefinition[];
+  turningPoints?: RawTurningPointDefinition[];
+  names?: Partial<RawNameData>;
+  localisation?: Partial<Record<LocaleCode, LocalisationPack>>;
+}
+
+export interface RawGameData {
+  actions: RawGameAction[];
+  stances: RawStance[];
+  events: RawEventDefinition[];
+  items: RawItemDefinition[];
+  traits: RawTraitDefinition[];
+  turningPoints: RawTurningPointDefinition[];
+  names: RawNameData;
+  localisation?: Partial<Record<LocaleCode, LocalisationPack>>;
 }

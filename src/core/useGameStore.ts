@@ -1,18 +1,22 @@
 import { create } from "zustand";
 import { createInitialState } from "./initialState";
+import { getStoredLocale, persistLocale, t } from "../localisation";
 import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn, advanceUntilImportantEvent } from "../systems/turnEngine";
 import { applyTurningPointChoice } from "../systems/turningPoints";
 import { parseMod } from "../mods/mergeMods";
-import type { GameData, GameState } from "../types/game";
+import type { GameData, GameState, LocaleCode, ModData } from "../types/game";
 
 const STORAGE_KEY = "new-game-save";
 
 interface GameStore {
   data: GameData;
+  locale: LocaleCode;
+  mods: ModData[];
   state: GameState;
   error: string | null;
+  setLocale: (locale: LocaleCode) => void;
   setAction: (actionId: string) => void;
   setStance: (stanceId: string) => void;
   nextTurn: () => void;
@@ -27,13 +31,22 @@ interface GameStore {
   clearError: () => void;
 }
 
-const initialData = createContent();
-const initialState = loadStoredState() ?? createInitialState(initialData);
+const initialLocale = getStoredLocale();
+const initialMods: ModData[] = [];
+const initialData = createContent(initialMods, initialLocale);
+const initialState = loadStoredState() ?? createInitialState(initialData, initialData.localisation);
 
 export const useGameStore = create<GameStore>((set, get) => ({
   data: initialData,
+  locale: initialLocale,
+  mods: initialMods,
   state: initialState,
   error: null,
+  setLocale: (locale) => {
+    persistLocale(locale);
+    const data = createContent(get().mods, locale);
+    set({ locale, data, error: null });
+  },
   setAction: (actionId) => set(({ state }) => ({ state: { ...state, selectedActionId: actionId } })),
   setStance: (stanceId) => set(({ state }) => ({ state: { ...state, selectedStanceId: stanceId } })),
   nextTurn: () => {
@@ -52,7 +65,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       persistState(next);
       set({ state: next, error: null });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : "転機の選択に失敗しました。" });
+      set({ error: error instanceof Error ? error.message : t(get().data.localisation, "system.error.turningChoiceFailed") });
     }
   },
   devJumpToAge: (ageYears) => {
@@ -73,7 +86,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       !state.player.lifeTags.some((tag) => tag.startsWith(`turning.${turningPoint.id}.`)),
     );
     if (!forced) {
-      set({ error: "発生できる転機がありません。" });
+      set({ error: t(get().data.localisation, "system.error.noTurningPoint") });
       return;
     }
 
@@ -89,7 +102,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ state: next, error: null });
   },
   reset: () => {
-    const next = createInitialState(get().data);
+    const next = createInitialState(get().data, get().data.localisation);
     persistState(next);
     set({ state: next, error: null });
   },
@@ -100,13 +113,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       persistState(imported);
       set({ state: imported, error: null });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : "読み込みに失敗しました。" });
+      set({ error: error instanceof Error ? error.message : t(get().data.localisation, "system.error.importFailed") });
     }
   },
   importModJson: (raw) => {
     try {
       const mod = parseMod(raw);
-      const data = createContent([mod]);
+      const mods = [...get().mods, mod];
+      const data = createContent(mods, get().locale);
       const state = {
         ...get().state,
         history: [
@@ -114,16 +128,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
             id: `mod-${Date.now()}`,
             turn: get().state.turn,
             ageMonths: get().state.player.ageMonths,
-            text: "Modの記録が世界に折り込まれた。",
+            text: t(data.localisation, "system.log.modImported"),
             category: "world",
           },
           ...get().state.history,
         ],
       };
       persistState(state);
-      set({ data, state, error: null });
+      set({ mods, data, state, error: null });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : "Modの読み込みに失敗しました。" });
+      set({ error: error instanceof Error ? error.message : t(get().data.localisation, "system.error.modImportFailed") });
     }
   },
   clearError: () => set({ error: null }),

@@ -1,18 +1,11 @@
 import { getTurnMonths } from "../core/lifePhase";
 import { isLifeComplete, STANDARD_TIME_SCALE } from "../core/timeScale";
+import { t } from "../localisation";
 import type { AbilityKey, GameData, GameState, HistoryEntry } from "../types/game";
 import { makeSeed } from "../utils/rng";
 import { applyEffects } from "./effects";
 import { resolveEvent } from "./events";
 import { createTurningPointLog, resolveTurningPoint } from "./turningPoints";
-
-const regionLabels = {
-  capital: "首都",
-  industrial: "工業地区",
-  academic: "学術地区",
-  religious: "宗教都市",
-  frontier: "辺境",
-};
 
 interface TurnResult {
   state: GameState;
@@ -57,7 +50,7 @@ export function advanceUntilImportantEvent(
 
   const importantIds = new Set(importantLogs.map((log) => log.id));
   const firstImportantIndex = current.history.findIndex((log) => importantIds.has(log.id));
-  const summary = createFastForwardSummary(startState, current, normalLogs);
+  const summary = createFastForwardSummary(startState, current, normalLogs, data);
 
   return {
     ...current,
@@ -104,8 +97,8 @@ function advanceTurnDetailed(state: GameState, data: GameData): TurnResult {
   nextState = applyNpcBehavior(nextState);
 
   const text = event
-    ? renderTemplate(event.template, nextState)
-    : "誰かが名付けるほどの出来事はなく、その期間は過ぎていく。";
+    ? renderTemplate(event.template, nextState, data)
+    : t(data.localisation, "system.log.noEvent");
 
   const log: HistoryEntry = {
     id: `turn-${turn}`,
@@ -193,11 +186,11 @@ function applyNpcBehavior(state: GameState): GameState {
   };
 }
 
-function renderTemplate(template: string, state: GameState): string {
+function renderTemplate(template: string, state: GameState, data: GameData): string {
   return template
     .replaceAll("{name}", state.player.name)
     .replaceAll("{nation}", state.world.nation)
-    .replaceAll("{region}", regionLabels[state.world.region]);
+    .replaceAll("{region}", t(data.localisation, `enum.region.${state.world.region}`));
 }
 
 function isImportantLog(log: HistoryEntry, data: GameData): boolean {
@@ -209,19 +202,24 @@ function createFastForwardSummary(
   start: GameState,
   end: GameState,
   normalLogs: HistoryEntry[],
+  data: GameData,
 ): HistoryEntry {
   const moneyDelta = end.player.money - start.player.money;
-  const statChanges = summarizeStatChanges(start, end);
+  const statChanges = summarizeStatChanges(start, end, data);
   const relationshipDelta = summarizeRelationshipChange(start, end);
-  const duration = formatDuration(end.player.ageMonths - start.player.ageMonths);
-  const fragments = [`${duration}が過ぎた`];
+  const duration = formatDuration(end.player.ageMonths - start.player.ageMonths, data);
+  const fragments = [t(data.localisation, "system.fastForward.elapsed", { duration })];
 
-  if (moneyDelta > 0) fragments.push("所持金は少し増えた");
-  if (moneyDelta < 0) fragments.push("所持金は少し減った");
-  if (statChanges.length > 0) fragments.push(`${statChanges.join("と")}が伸びた`);
-  if (relationshipDelta > 0) fragments.push("人との距離は近づいた");
-  if (relationshipDelta < 0) fragments.push("人との距離は少し離れた");
-  fragments.push(`${normalLogs.length}件の小さな出来事が起きた`);
+  if (moneyDelta > 0) fragments.push(t(data.localisation, "system.fastForward.moneyUp"));
+  if (moneyDelta < 0) fragments.push(t(data.localisation, "system.fastForward.moneyDown"));
+  if (statChanges.length > 0) {
+    fragments.push(t(data.localisation, "system.fastForward.statsUp", {
+      stats: statChanges.join(t(data.localisation, "system.fastForward.statsSeparator")),
+    }));
+  }
+  if (relationshipDelta > 0) fragments.push(t(data.localisation, "system.fastForward.relationshipUp"));
+  if (relationshipDelta < 0) fragments.push(t(data.localisation, "system.fastForward.relationshipDown"));
+  fragments.push(t(data.localisation, "system.fastForward.smallEvents", { count: normalLogs.length }));
 
   return {
     id: `summary-${start.turn + 1}-${end.turn}`,
@@ -233,18 +231,10 @@ function createFastForwardSummary(
   };
 }
 
-function summarizeStatChanges(start: GameState, end: GameState): string[] {
-  const labels: Record<AbilityKey, string> = {
-    body: "身体",
-    mind: "知性",
-    craft: "技能",
-    social: "社交",
-    spirit: "精神",
-  };
-
+function summarizeStatChanges(start: GameState, end: GameState, data: GameData): string[] {
   return (Object.keys(start.player.stats) as AbilityKey[])
     .filter((key) => end.player.stats[key] - start.player.stats[key] >= 1)
-    .map((key) => labels[key]);
+    .map((key) => t(data.localisation, `enum.ability.${key}`));
 }
 
 function summarizeRelationshipChange(start: GameState, end: GameState): number {
@@ -254,13 +244,13 @@ function summarizeRelationshipChange(start: GameState, end: GameState): number {
   }, 0);
 }
 
-function formatDuration(months: number): string {
+function formatDuration(months: number, data: GameData): string {
   const years = Math.floor(months / 12);
   const restMonths = months % 12;
 
-  if (years <= 0) return `${restMonths}か月`;
-  if (restMonths === 0) return `${years}年`;
-  return `${years}年${restMonths}か月`;
+  if (years <= 0) return t(data.localisation, "format.duration.months", { months: restMonths });
+  if (restMonths === 0) return t(data.localisation, "format.duration.years", { years });
+  return t(data.localisation, "format.duration.yearsMonths", { years, months: restMonths });
 }
 
 function insertSummaryLog(

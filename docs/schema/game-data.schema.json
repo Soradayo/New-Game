@@ -31,12 +31,19 @@
     },
     "names": {
       "$ref": "https://new-game.local/schema/names.schema.json"
+    },
+    "localisation": {
+      "$ref": "https://new-game.local/schema/localisation.schema.json"
     }
   },
   "$defs": {
     "id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$"
+    },
+    "locKey": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
     }
   }
 }

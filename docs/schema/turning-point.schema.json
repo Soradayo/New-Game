@@ -4,14 +4,14 @@
   "title": "Turning Point",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "label", "description", "category", "weight", "ageWindow", "conditions", "choices"],
+  "required": ["id", "labelKey", "descriptionKey", "category", "weight", "ageWindow", "conditions", "choices"],
   "properties": {
     "id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$"
     },
-    "label": { "type": "string", "minLength": 1 },
-    "description": { "type": "string", "minLength": 1 },
+    "labelKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
+    "descriptionKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
     "category": {
       "enum": ["education", "career", "relationship", "world"]
     },
@@ -39,27 +39,27 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "label", "description", "requirements", "outcomeSummary", "effects", "grantsTags"],
+        "required": ["id", "labelKey", "descriptionKey", "requirements", "outcomeSummaryKey", "effects", "grantsTags"],
         "properties": {
           "id": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$"
           },
-          "label": { "type": "string", "minLength": 1 },
-          "description": { "type": "string", "minLength": 1 },
+          "labelKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
+          "descriptionKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
           "requirements": {
             "type": "array",
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["condition", "reason"],
+              "required": ["condition", "reasonKey"],
               "properties": {
                 "condition": { "$ref": "https://new-game.local/schema/condition.schema.json" },
-                "reason": { "type": "string", "minLength": 1 }
+                "reasonKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" }
               }
             }
           },
-          "outcomeSummary": { "type": "string", "minLength": 1 },
+          "outcomeSummaryKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
           "effects": {
             "type": "array",
             "items": { "$ref": "https://new-game.local/schema/effect.schema.json" }
@@ -102,7 +102,7 @@
                   }
                 },
                 "bond": { "type": "number" },
-                "log": { "type": "string", "minLength": 1 }
+                "logKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" }
               }
             }
           }

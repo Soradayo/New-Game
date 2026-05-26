@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { baseGameData } from "../data";
+import { baseRawGameData } from "../data";
 import { parseMod } from "../mods/mergeMods";
 import { validateGameData } from "./validateGameData";
 
 describe("game data schema validation", () => {
   it("accepts the base game data", () => {
-    expect(() => validateGameData(baseGameData, "base")).not.toThrow();
+    expect(() => validateGameData(baseRawGameData, "base")).not.toThrow();
   });
 
   it("rejects a mod with an invalid event category", () => {
@@ -17,7 +17,7 @@ describe("game data schema validation", () => {
           weight: 1,
           conditions: [],
           effects: [],
-          template: "bad",
+          templateKey: "test.bad.template",
         },
       ],
     }))).toThrow("/events/0/category");
@@ -28,8 +28,8 @@ describe("game data schema validation", () => {
       actions: [
         {
           id: "bad-action",
-          label: "Bad",
-          description: "Bad effect target.",
+          labelKey: "test.bad.label",
+          descriptionKey: "test.bad.description",
           effects: [
             { target: "stats.luck", value: 1 },
           ],
@@ -39,7 +39,7 @@ describe("game data schema validation", () => {
   });
 
   it("rejects a mod with an invalid turning point choice career category", () => {
-    const baseTurningPoint = baseGameData.turningPoints[0];
+    const baseTurningPoint = baseRawGameData.turningPoints[0];
 
     expect(() => parseMod(JSON.stringify({
       turningPoints: [

@@ -1,0 +1,25 @@
+{
+  "$id": "https://new-game.local/schema/localisation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Localisation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ja": { "$ref": "#/$defs/pack" },
+    "en": { "$ref": "#/$defs/pack" }
+  },
+  "$defs": {
+    "pack": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      }
+    }
+  }
+}

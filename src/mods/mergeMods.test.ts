@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { baseGameData } from "../data";
+import { baseRawGameData } from "../data";
 import { mergeGameData, parseMod } from "./mergeMods";
 
 describe("mod merging", () => {
@@ -8,17 +8,23 @@ describe("mod merging", () => {
       traits: [
         {
           id: "quiet",
-          label: "寡黙",
-          description: "言葉よりも沈黙を選ぶ。",
+          labelKey: "mod.trait.quiet.label",
+          descriptionKey: "mod.trait.quiet.description",
           tags: ["temperament"],
           effects: [
             { target: "stats.spirit", value: 1 },
           ],
         },
       ],
+      localisation: {
+        ja: {
+          "mod.trait.quiet.label": "寡黙",
+          "mod.trait.quiet.description": "言葉よりも沈黙を選ぶ。",
+        },
+      },
     }));
 
-    const merged = mergeGameData(baseGameData, [mod]);
+    const merged = mergeGameData(baseRawGameData, [mod]);
 
     expect(merged.traits.some((trait) => trait.id === "quiet")).toBe(true);
   });
@@ -28,38 +34,49 @@ describe("mod merging", () => {
       traits: [
         {
           id: "observant",
-          label: "鋭い観察眼",
-          description: "細部に気づきやすい。",
+          labelKey: "mod.trait.observant.label",
+          descriptionKey: "mod.trait.observant.description",
           tags: ["perception"],
           effects: [
             { target: "stats.mind", value: 2 },
           ],
         },
       ],
+      localisation: {
+        ja: {
+          "mod.trait.observant.label": "鋭い観察眼",
+          "mod.trait.observant.description": "細部に気づきやすい。",
+        },
+      },
     }));
 
-    const merged = mergeGameData(baseGameData, [mod]);
+    const merged = mergeGameData(baseRawGameData, [mod]);
     const trait = merged.traits.find((entry) => entry.id === "observant");
 
-    expect(trait?.label).toBe("鋭い観察眼");
+    expect(trait?.labelKey).toBe("mod.trait.observant.label");
     expect(merged.traits.filter((entry) => entry.id === "observant")).toHaveLength(1);
   });
 
   it("merges and replaces turning points from mods", () => {
-    const baseTurningPoint = baseGameData.turningPoints[0];
+    const baseTurningPoint = baseRawGameData.turningPoints[0];
     const mod = parseMod(JSON.stringify({
       turningPoints: [
         {
           ...baseTurningPoint,
-          label: "Modの転機",
+          labelKey: "mod.turning.replacement.label",
         },
       ],
+      localisation: {
+        ja: {
+          "mod.turning.replacement.label": "Modの転機",
+        },
+      },
     }));
 
-    const merged = mergeGameData(baseGameData, [mod]);
+    const merged = mergeGameData(baseRawGameData, [mod]);
     const turningPoint = merged.turningPoints.find((entry) => entry.id === baseTurningPoint.id);
 
-    expect(turningPoint?.label).toBe("Modの転機");
+    expect(turningPoint?.labelKey).toBe("mod.turning.replacement.label");
     expect(merged.turningPoints.filter((entry) => entry.id === baseTurningPoint.id)).toHaveLength(1);
   });
 });

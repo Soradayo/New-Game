@@ -6,6 +6,7 @@ import type {
   TurningPointChoice,
   TurningPointDefinition,
 } from "../types/game";
+import { t } from "../localisation";
 import { applyEffects } from "./effects";
 import { matchesCondition } from "./conditions";
 
@@ -76,19 +77,19 @@ export function applyTurningPointChoice(
 
   const choice = turningPoint.choices.find((item) => item.id === choiceId);
   if (!choice) {
-    throw new Error("その選択肢は見つかりません。");
+    throw new Error(t(data.localisation, "system.error.turningChoiceFailed"));
   }
 
   const availability = getChoiceAvailability(state, choice);
   if (!availability.available) {
-    throw new Error(availability.reasons[0] ?? "その選択肢はまだ選べません。");
+    throw new Error(availability.reasons[0] ?? t(data.localisation, "system.error.turningChoiceFailed"));
   }
 
   let nextState = applyEffects(state, choice.effects);
   nextState = applyChoiceState(nextState, turningPoint, choice);
   nextState = applyNpcOutcomes(nextState, choice);
 
-  const logs = createChoiceLogs(nextState, turningPoint, choice);
+  const logs = createChoiceLogs(nextState, turningPoint, choice, data);
 
   return {
     ...nextState,
@@ -109,7 +110,10 @@ export function createTurningPointLog(
     eventId: `turning:${pending.id}`,
     turn: pending.turn,
     ageMonths: pending.ageMonths,
-    text: `${turningPoint.label}が訪れた。${turningPoint.description}`,
+    text: t(data.localisation, "system.log.turningAppeared", {
+      label: turningPoint.label,
+      description: turningPoint.description,
+    }),
     category: "turningPoint",
   };
 }
@@ -199,13 +203,17 @@ function createChoiceLogs(
   state: GameState,
   turningPoint: TurningPointDefinition,
   choice: TurningPointChoice,
+  data: GameData,
 ): HistoryEntry[] {
   const mainLog: HistoryEntry = {
     id: `turning-choice-${state.turn}-${turningPoint.id}-${choice.id}`,
     eventId: `turning:${turningPoint.id}:${choice.id}`,
     turn: state.turn,
     ageMonths: state.player.ageMonths,
-    text: `${choice.label}を選んだ。${choice.outcomeSummary}`,
+    text: t(data.localisation, "system.log.turningChoice", {
+      label: choice.label,
+      summary: choice.outcomeSummary,
+    }),
     category: "turningPoint",
   };
 

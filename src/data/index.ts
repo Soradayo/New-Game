@@ -5,10 +5,12 @@ import names from "./names.json";
 import stances from "./stances.json";
 import traits from "./traits.json";
 import turningPoints from "./turningPoints.json";
-import type { GameData } from "../types/game";
+import type { RawGameData } from "../types/game";
 import { validateGameData } from "../schema/validateGameData";
+import { baseLocalisation, DEFAULT_LOCALE } from "../localisation";
+import { hydrateGameData } from "../localisation/hydrateGameData";
 
-export const baseGameData = validateGameData({
+export const baseRawGameData = validateGameData({
   actions,
   stances,
   events,
@@ -16,4 +18,6 @@ export const baseGameData = validateGameData({
   traits,
   turningPoints,
   names,
-} as unknown, "base") as GameData;
+} as unknown, "base") as RawGameData;
+
+export const baseGameData = hydrateGameData(baseRawGameData, baseLocalisation[DEFAULT_LOCALE]);

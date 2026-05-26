@@ -1,7 +1,8 @@
 import type { GameData, GameState, Relationship } from "../types/game";
 import { SAVE_VERSION } from "../saves/saveCodec";
+import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
 
-export function createInitialState(data: GameData): GameState {
+export function createInitialState(data: GameData, pack = baseLocalisation[DEFAULT_LOCALE]): GameState {
   const playerName = `${data.names.given[0]} ${data.names.family[0]}`;
 
   return {
@@ -14,7 +15,7 @@ export function createInitialState(data: GameData): GameState {
       name: playerName,
       ageMonths: 72,
       socialClass: "worker",
-      affiliation: "なし",
+      affiliation: t(pack, "world.affiliation.none"),
       money: 12,
       educationLevel: "primary",
       careerCategory: "none",
@@ -29,35 +30,35 @@ export function createInitialState(data: GameData): GameState {
       inventory: ["cheap-primer"],
     },
     world: {
-      nation: "ヴェイル",
-      nationArchetype: "商業国家",
+      nation: t(pack, "world.nation.veil"),
+      nationArchetype: t(pack, "world.nationArchetype.commercial"),
       region: "industrial",
       organizations: {
-        state: "市民登録局",
-        corporation: "メロウ工業",
-        academia: "ローレル学院",
-        religion: "灯火教会",
-        underground: "赤い坑",
+        state: t(pack, "world.organization.state"),
+        corporation: t(pack, "world.organization.corporation"),
+        academia: t(pack, "world.organization.academia"),
+        religion: t(pack, "world.organization.religion"),
+        underground: t(pack, "world.organization.underground"),
       },
       pressure: 12,
     },
-    relationships: createInitialRelationships(data),
+    relationships: createInitialRelationships(data, pack),
     history: [
       {
         id: "opening",
         turn: 0,
         ageMonths: 72,
-        text: `${playerName}は、名前と地区と、まだ意味のわからない負債を持って始まる。`,
+        text: t(pack, "system.opening", { name: playerName }),
         category: "daily",
       },
     ],
   };
 }
 
-function createInitialRelationships(data: GameData): Relationship[] {
+function createInitialRelationships(data: GameData, pack = baseLocalisation[DEFAULT_LOCALE]): Relationship[] {
   return data.names.npcRoles.map((role, index) => ({
     id: role,
-    name: `${data.names.given[index + 1] ?? "レン"} ${data.names.family[index + 1] ?? "ヴェイル"}`,
+    name: `${data.names.given[index + 1] ?? t(pack, "system.fallbackName.given")} ${data.names.family[index + 1] ?? t(pack, "system.fallbackName.family")}`,
     role,
     bond: 10 - index * 3,
     ageMonths: 72 + index * 12,

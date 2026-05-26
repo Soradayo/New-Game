@@ -1,8 +1,6 @@
 [
   {
     "id": "first-school-crossroad",
-    "label": "進学の岐路",
-    "description": "学び続けるか、家計を支える側へ回るかを迫られる。",
     "category": "education",
     "weight": 8,
     "ageWindow": {
@@ -14,84 +12,133 @@
     "choices": [
       {
         "id": "enter-secondary-school",
-        "label": "中等学校へ進む",
-        "description": "教師の紹介を受け、さらに学ぶ道へ進む。",
         "requirements": [
           {
-            "condition": { "target": "stats.mind", "op": "gte", "value": 11 },
-            "reason": "知性がまだ足りない。"
+            "condition": {
+              "target": "stats.mind",
+              "op": "gte",
+              "value": 11
+            },
+            "reasonKey": "turning.first-school-crossroad.choice.enter-secondary-school.requirement.0.reason"
           },
           {
-            "condition": { "target": "money", "op": "gte", "value": 8 },
-            "reason": "家計が入学の支度に耐えられない。"
+            "condition": {
+              "target": "money",
+              "op": "gte",
+              "value": 8
+            },
+            "reasonKey": "turning.first-school-crossroad.choice.enter-secondary-school.requirement.1.reason"
           }
         ],
-        "outcomeSummary": "学びの時間は増えるが、家計の余裕は削られる。",
         "effects": [
-          { "target": "money", "value": -5 },
-          { "target": "stats.mind", "value": 2 },
-          { "target": "relationship.mentor", "value": 3 }
+          {
+            "target": "money",
+            "value": -5
+          },
+          {
+            "target": "stats.mind",
+            "value": 2
+          },
+          {
+            "target": "relationship.mentor",
+            "value": 3
+          }
         ],
-        "grantsTags": ["education.secondary.track"],
+        "grantsTags": [
+          "education.secondary.track"
+        ],
         "educationLevel": "secondary",
         "npcOutcomes": [
           {
             "role": "mentor",
-            "grantsTags": ["opened-school-door"],
+            "grantsTags": [
+              "opened-school-door"
+            ],
             "bond": 2,
-            "log": "導き手は、あなたの名を学校へ届けた。"
+            "logKey": "turning.first-school-crossroad.choice.enter-secondary-school.npc.0.log"
           }
-        ]
+        ],
+        "labelKey": "turning.first-school-crossroad.choice.enter-secondary-school.label",
+        "descriptionKey": "turning.first-school-crossroad.choice.enter-secondary-school.description",
+        "outcomeSummaryKey": "turning.first-school-crossroad.choice.enter-secondary-school.outcomeSummary"
       },
       {
         "id": "support-household",
-        "label": "家計を支える",
-        "description": "学校よりも、その日の仕事と家の食卓を選ぶ。",
         "requirements": [],
-        "outcomeSummary": "労働の道が早く開くが、学びの機会は遠のく。",
         "effects": [
-          { "target": "money", "value": 6 },
-          { "target": "stats.craft", "value": 1 },
-          { "target": "stats.body", "value": 1 }
+          {
+            "target": "money",
+            "value": 6
+          },
+          {
+            "target": "stats.craft",
+            "value": 1
+          },
+          {
+            "target": "stats.body",
+            "value": 1
+          }
         ],
-        "grantsTags": ["education.left-for-work"],
+        "grantsTags": [
+          "education.left-for-work"
+        ],
         "careerCategory": "labor",
         "npcOutcomes": [
           {
             "role": "sibling",
             "careerCategory": "labor",
-            "grantsTags": ["household-supported"],
+            "grantsTags": [
+              "household-supported"
+            ],
             "bond": 2,
-            "log": "きょうだいは、あなたが家へ持ち帰った賃金を忘れない。"
+            "logKey": "turning.first-school-crossroad.choice.support-household.npc.0.log"
           }
-        ]
+        ],
+        "labelKey": "turning.first-school-crossroad.choice.support-household.label",
+        "descriptionKey": "turning.first-school-crossroad.choice.support-household.description",
+        "outcomeSummaryKey": "turning.first-school-crossroad.choice.support-household.outcomeSummary"
       },
       {
         "id": "night-study",
-        "label": "夜学を探す",
-        "description": "働きながら、夜に読める場所を探す。",
         "requirements": [
           {
-            "condition": { "target": "stats.spirit", "op": "gte", "value": 10 },
-            "reason": "夜まで学ぶ気力がまだ続かない。"
+            "condition": {
+              "target": "stats.spirit",
+              "op": "gte",
+              "value": 10
+            },
+            "reasonKey": "turning.first-school-crossroad.choice.night-study.requirement.0.reason"
           }
         ],
-        "outcomeSummary": "遠回りだが、学びと労働のどちらも少しずつ残る。",
         "effects": [
-          { "target": "money", "value": 1 },
-          { "target": "stats.mind", "value": 1 },
-          { "target": "stats.spirit", "value": 1 }
+          {
+            "target": "money",
+            "value": 1
+          },
+          {
+            "target": "stats.mind",
+            "value": 1
+          },
+          {
+            "target": "stats.spirit",
+            "value": 1
+          }
         ],
-        "grantsTags": ["education.night-school.path"],
+        "grantsTags": [
+          "education.night-school.path"
+        ],
         "educationLevel": "nightSchool",
-        "careerCategory": "labor"
+        "careerCategory": "labor",
+        "labelKey": "turning.first-school-crossroad.choice.night-study.label",
+        "descriptionKey": "turning.first-school-crossroad.choice.night-study.description",
+        "outcomeSummaryKey": "turning.first-school-crossroad.choice.night-study.outcomeSummary"
       }
-    ]
+    ],
+    "labelKey": "turning.first-school-crossroad.label",
+    "descriptionKey": "turning.first-school-crossroad.description"
   },
   {
     "id": "first-work-crossroad",
-    "label": "最初の職",
-    "description": "何者として働き始めるのかを決める時期が来る。",
     "category": "career",
     "weight": 7,
     "ageWindow": {
@@ -103,83 +150,145 @@
     "choices": [
       {
         "id": "factory-apprentice",
-        "label": "工場の徒弟になる",
-        "description": "機械の音の下で、手に職をつける。",
         "requirements": [],
-        "outcomeSummary": "安定した賃金と技能を得るが、身体は削られる。",
         "effects": [
-          { "target": "money", "value": 8 },
-          { "target": "stats.craft", "value": 2 },
-          { "target": "stats.body", "value": -1 },
-          { "target": "world.pressure", "value": 1 }
+          {
+            "target": "money",
+            "value": 8
+          },
+          {
+            "target": "stats.craft",
+            "value": 2
+          },
+          {
+            "target": "stats.body",
+            "value": -1
+          },
+          {
+            "target": "world.pressure",
+            "value": 1
+          }
         ],
-        "grantsTags": ["career.factory-apprentice"],
+        "grantsTags": [
+          "career.factory-apprentice"
+        ],
         "careerCategory": "labor",
         "npcOutcomes": [
           {
             "role": "neighbor",
             "careerCategory": "labor",
             "bond": 1,
-            "log": "隣人は同じ工場の門をくぐった。"
+            "logKey": "turning.first-work-crossroad.choice.factory-apprentice.npc.0.log"
           }
-        ]
+        ],
+        "labelKey": "turning.first-work-crossroad.choice.factory-apprentice.label",
+        "descriptionKey": "turning.first-work-crossroad.choice.factory-apprentice.description",
+        "outcomeSummaryKey": "turning.first-work-crossroad.choice.factory-apprentice.outcomeSummary"
       },
       {
         "id": "clerk-probation",
-        "label": "書記見習いになる",
-        "description": "帳簿と書類の山に、別の階段を見つける。",
         "requirements": [
           {
-            "condition": { "target": "stats.mind", "op": "gte", "value": 14 },
-            "reason": "読み書きの力がまだ足りない。"
+            "condition": {
+              "target": "stats.mind",
+              "op": "gte",
+              "value": 14
+            },
+            "reasonKey": "turning.first-work-crossroad.choice.clerk-probation.requirement.0.reason"
           },
           {
-            "condition": { "target": "stats.social", "op": "gte", "value": 10 },
-            "reason": "紹介を得られるだけの信用がまだない。"
+            "condition": {
+              "target": "stats.social",
+              "op": "gte",
+              "value": 10
+            },
+            "reasonKey": "turning.first-work-crossroad.choice.clerk-probation.requirement.1.reason"
           }
         ],
-        "outcomeSummary": "事務の道が開くが、規則と上役に縛られる。",
         "effects": [
-          { "target": "money", "value": 5 },
-          { "target": "stats.mind", "value": 1 },
-          { "target": "stats.social", "value": 1 },
-          { "target": "relationship.mentor", "value": 2 }
+          {
+            "target": "money",
+            "value": 5
+          },
+          {
+            "target": "stats.mind",
+            "value": 1
+          },
+          {
+            "target": "stats.social",
+            "value": 1
+          },
+          {
+            "target": "relationship.mentor",
+            "value": 2
+          }
         ],
-        "grantsTags": ["career.clerk-probation"],
-        "careerCategory": "clerical"
+        "grantsTags": [
+          "career.clerk-probation"
+        ],
+        "careerCategory": "clerical",
+        "labelKey": "turning.first-work-crossroad.choice.clerk-probation.label",
+        "descriptionKey": "turning.first-work-crossroad.choice.clerk-probation.description",
+        "outcomeSummaryKey": "turning.first-work-crossroad.choice.clerk-probation.outcomeSummary"
       },
       {
         "id": "underground-runner",
-        "label": "地下の使い走りになる",
-        "description": "名のない仕事を引き受け、表通りから外れる。",
         "requirements": [
           {
-            "condition": { "target": "world.pressure", "op": "gte", "value": 12 },
-            "reason": "まだ地下組織が人手を求めるほど街は張り詰めていない。"
+            "condition": {
+              "target": "world.pressure",
+              "op": "gte",
+              "value": 12
+            },
+            "reasonKey": "turning.first-work-crossroad.choice.underground-runner.requirement.0.reason"
           },
           {
-            "condition": { "target": "stats.social", "op": "gte", "value": 12 },
-            "reason": "声をかけられるほど顔が広くない。"
+            "condition": {
+              "target": "stats.social",
+              "op": "gte",
+              "value": 12
+            },
+            "reasonKey": "turning.first-work-crossroad.choice.underground-runner.requirement.1.reason"
           }
         ],
-        "outcomeSummary": "金と縁は増えるが、世界の圧力に巻き込まれる。",
         "effects": [
-          { "target": "money", "value": 7 },
-          { "target": "stats.social", "value": 2 },
-          { "target": "world.pressure", "value": 3 },
-          { "target": "relationship.all", "value": -1 }
+          {
+            "target": "money",
+            "value": 7
+          },
+          {
+            "target": "stats.social",
+            "value": 2
+          },
+          {
+            "target": "world.pressure",
+            "value": 3
+          },
+          {
+            "target": "relationship.all",
+            "value": -1
+          }
         ],
-        "grantsTags": ["career.underground-runner"],
+        "grantsTags": [
+          "career.underground-runner"
+        ],
         "careerCategory": "underground",
         "npcOutcomes": [
           {
             "role": "neighbor",
-            "grantsTags": ["knows-underground-route"],
+            "grantsTags": [
+              "knows-underground-route"
+            ],
             "bond": -2,
-            "log": "隣人は、あなたが裏通りへ消えるのを見てしまった。"
+            "logKey": "turning.first-work-crossroad.choice.underground-runner.npc.0.log"
           }
-        ]
+        ],
+        "labelKey": "turning.first-work-crossroad.choice.underground-runner.label",
+        "descriptionKey": "turning.first-work-crossroad.choice.underground-runner.description",
+        "outcomeSummaryKey": "turning.first-work-crossroad.choice.underground-runner.outcomeSummary"
       }
-    ]
+    ],
+    "labelKey": "turning.first-work-crossroad.label",
+    "descriptionKey": "turning.first-work-crossroad.description"
   }
 ]

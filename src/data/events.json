@@ -6,9 +6,12 @@
     "cooldownTurns": 2,
     "conditions": [],
     "effects": [
-      { "target": "world.pressure", "value": 1 }
+      {
+        "target": "world.pressure",
+        "value": 1
+      }
     ],
-    "template": "夜明け前、{region}に工場の鐘が届く。誰が最初に起きたのかは、誰も尋ねない。"
+    "templateKey": "event.factory-bell.template"
   },
   {
     "id": "borrowed-book",
@@ -16,12 +19,19 @@
     "weight": 6,
     "cooldownTurns": 2,
     "conditions": [
-      { "target": "stats.mind", "op": "gte", "value": 12 }
+      {
+        "target": "stats.mind",
+        "op": "gte",
+        "value": 12
+      }
     ],
     "effects": [
-      { "target": "stats.mind", "value": 1 }
+      {
+        "target": "stats.mind",
+        "value": 1
+      }
     ],
-    "template": "借りた本が、見知らぬ筆跡の書き込みを連れて戻ってくる。"
+    "templateKey": "event.borrowed-book.template"
   },
   {
     "id": "thin-supper",
@@ -29,12 +39,19 @@
     "weight": 7,
     "cooldownTurns": 2,
     "conditions": [
-      { "target": "money", "op": "lte", "value": 8 }
+      {
+        "target": "money",
+        "op": "lte",
+        "value": 8
+      }
     ],
     "effects": [
-      { "target": "stats.body", "value": -1 }
+      {
+        "target": "stats.body",
+        "value": -1
+      }
     ],
-    "template": "夕食は薄く引き延ばされ、沈黙まで食卓の一部になる。"
+    "templateKey": "event.thin-supper.template"
   },
   {
     "id": "street-preacher",
@@ -43,9 +60,12 @@
     "cooldownTurns": 2,
     "conditions": [],
     "effects": [
-      { "target": "stats.spirit", "value": 1 }
+      {
+        "target": "stats.spirit",
+        "value": 1
+      }
     ],
-    "template": "街頭の説教師が、この時代を試練と呼ぶ。うなずく者も、笑う者もいる。"
+    "templateKey": "event.street-preacher.template"
   },
   {
     "id": "foreman-notices",
@@ -53,12 +73,19 @@
     "weight": 3,
     "cooldownTurns": 8,
     "conditions": [
-      { "target": "stats.craft", "op": "gte", "value": 14 }
+      {
+        "target": "stats.craft",
+        "op": "gte",
+        "value": 14
+      }
     ],
     "effects": [
-      { "target": "money", "value": 7 }
+      {
+        "target": "money",
+        "value": 7
+      }
     ],
-    "template": "職長が確かな手つきに気づき、気が変わる前に賃金を渡す。"
+    "templateKey": "event.foreman-notices.template"
   },
   {
     "id": "class-whisper",
@@ -67,9 +94,12 @@
     "cooldownTurns": 2,
     "conditions": [],
     "effects": [
-      { "target": "relationship.all", "value": 1 }
+      {
+        "target": "relationship.all",
+        "value": 1
+      }
     ],
-    "template": "誰かが、未来を所有する者についての噂を分けてくれる。"
+    "templateKey": "event.class-whisper.template"
   },
   {
     "id": "police-patrol",
@@ -77,12 +107,19 @@
     "weight": 4,
     "cooldownTurns": 3,
     "conditions": [
-      { "target": "world.pressure", "op": "gte", "value": 25 }
+      {
+        "target": "world.pressure",
+        "op": "gte",
+        "value": 25
+      }
     ],
     "effects": [
-      { "target": "relationship.all", "value": -1 }
+      {
+        "target": "relationship.all",
+        "value": -1
+      }
     ],
-    "template": "巡回兵が広場を二度横切る。会話は短くなる。"
+    "templateKey": "event.police-patrol.template"
   },
   {
     "id": "keepsake",
@@ -90,12 +127,19 @@
     "weight": 2,
     "cooldownTurns": 20,
     "conditions": [
-      { "target": "ageMonths", "op": "gte", "value": 144 }
+      {
+        "target": "ageMonths",
+        "op": "gte",
+        "value": 144
+      }
     ],
     "effects": [
-      { "target": "inventory.add", "value": "keepsake-ribbon" }
+      {
+        "target": "inventory.add",
+        "value": "keepsake-ribbon"
+      }
     ],
-    "template": "説明もなく、一本のリボンが{name}の手に押し込まれる。"
+    "templateKey": "event.keepsake.template"
   },
   {
     "id": "union-pamphlet",
@@ -104,12 +148,19 @@
     "isMajor": true,
     "cooldownTurns": 6,
     "conditions": [
-      { "target": "stats.social", "op": "gte", "value": 14 }
+      {
+        "target": "stats.social",
+        "op": "gte",
+        "value": 14
+      }
     ],
     "effects": [
-      { "target": "world.pressure", "value": 3 }
+      {
+        "target": "world.pressure",
+        "value": 3
+      }
     ],
-    "template": "折りたたまれた小冊子が、公示の下で手から手へ渡る。"
+    "templateKey": "event.union-pamphlet.template"
   },
   {
     "id": "quiet-month",
@@ -118,6 +169,6 @@
     "cooldownTurns": 2,
     "conditions": [],
     "effects": [],
-    "template": "目立つ出来事はなく、いつもの支度だけが続いた。"
+    "templateKey": "event.quiet-month.template"
   }
 ]

@@ -1,26 +1,35 @@
 [
   {
     "id": "keepsake-ribbon",
-    "label": "形見のリボン",
-    "description": "ある瞬間が確かにあったと示す、小さな品。",
     "effects": [
-      { "target": "stats.spirit", "value": 1 }
-    ]
+      {
+        "target": "stats.spirit",
+        "value": 1
+      }
+    ],
+    "labelKey": "item.keepsake-ribbon.label",
+    "descriptionKey": "item.keepsake-ribbon.description"
   },
   {
     "id": "worn-tools",
-    "label": "使い込まれた道具",
-    "description": "捨てるより直す価値がある道具。",
     "effects": [
-      { "target": "stats.craft", "value": 1 }
-    ]
+      {
+        "target": "stats.craft",
+        "value": 1
+      }
+    ],
+    "labelKey": "item.worn-tools.label",
+    "descriptionKey": "item.worn-tools.description"
   },
   {
     "id": "cheap-primer",
-    "label": "安い入門書",
-    "description": "文字と計算、そしてその両方に耐える忍耐。",
     "effects": [
-      { "target": "stats.mind", "value": 1 }
-    ]
+      {
+        "target": "stats.mind",
+        "value": 1
+      }
+    ],
+    "labelKey": "item.cheap-primer.label",
+    "descriptionKey": "item.cheap-primer.description"
   }
 ]

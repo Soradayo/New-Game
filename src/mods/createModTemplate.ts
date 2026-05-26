@@ -5,8 +5,8 @@ export function createModTemplate(): ModData {
     actions: [
       {
         id: "mod-observe-town",
-        label: "街を観察する",
-        description: "通りの変化と、人々の噂に目を向ける。",
+        labelKey: "mod.action.observe-town.label",
+        descriptionKey: "mod.action.observe-town.description",
         effects: [
           { target: "stats.mind", value: 1 },
           { target: "stats.social", value: 1 },
@@ -26,14 +26,14 @@ export function createModTemplate(): ModData {
         effects: [
           { target: "stats.spirit", value: 1 },
         ],
-        template: "{region}に雨が続く。濡れた掲示板の文字だけが、妙にはっきり見える。",
+        templateKey: "mod.event.rainy-notice.template",
       },
     ],
     traits: [
       {
         id: "mod-rain-reader",
-        label: "雨読み",
-        description: "雨の日の街から、わずかな変化を読み取る。",
+        labelKey: "mod.trait.rain-reader.label",
+        descriptionKey: "mod.trait.rain-reader.description",
         tags: ["background"],
         effects: [
           { target: "stats.mind", value: 1 },
@@ -43,8 +43,8 @@ export function createModTemplate(): ModData {
     turningPoints: [
       {
         id: "mod-apprentice-printer",
-        label: "印刷所の誘い",
-        description: "活字の匂いがする小さな仕事場から、見習いの話が届く。",
+        labelKey: "mod.turning.apprentice-printer.label",
+        descriptionKey: "mod.turning.apprentice-printer.description",
         category: "career",
         weight: 2,
         ageWindow: {
@@ -58,15 +58,15 @@ export function createModTemplate(): ModData {
         choices: [
           {
             id: "enter-print-shop",
-            label: "印刷所に入る",
-            description: "活字と紙束の間で、言葉を運ぶ仕事を覚える。",
+            labelKey: "mod.turning.apprentice-printer.choice.enter-print-shop.label",
+            descriptionKey: "mod.turning.apprentice-printer.choice.enter-print-shop.description",
             requirements: [
               {
                 condition: { target: "stats.mind", op: "gte", value: 12 },
-                reason: "読み書きの力がまだ足りない。",
+                reasonKey: "mod.turning.apprentice-printer.choice.enter-print-shop.requirement.0.reason",
               },
             ],
-            outcomeSummary: "事務と職人仕事のあいだに、小さな道が開く。",
+            outcomeSummaryKey: "mod.turning.apprentice-printer.choice.enter-print-shop.outcomeSummary",
             effects: [
               { target: "money", value: 4 },
               { target: "stats.craft", value: 1 },
@@ -79,9 +79,23 @@ export function createModTemplate(): ModData {
       },
     ],
     names: {
-      given: ["ノア"],
-      family: ["活字通り"],
       npcRoles: ["printer"],
+    },
+    localisation: {
+      ja: {
+        "mod.action.observe-town.label": "街を観察する",
+        "mod.action.observe-town.description": "通りの変化と、人々の噂に目を向ける。",
+        "mod.event.rainy-notice.template": "{region}に雨が続く。濡れた掲示板の文字だけが、妙にはっきり見える。",
+        "mod.trait.rain-reader.label": "雨読み",
+        "mod.trait.rain-reader.description": "雨の日の街から、わずかな変化を読み取る。",
+        "mod.turning.apprentice-printer.label": "印刷所の誘い",
+        "mod.turning.apprentice-printer.description": "活字の匂いがする小さな仕事場から、見習いの話が届く。",
+        "mod.turning.apprentice-printer.choice.enter-print-shop.label": "印刷所に入る",
+        "mod.turning.apprentice-printer.choice.enter-print-shop.description": "活字と紙束の間で、言葉を運ぶ仕事を覚える。",
+        "mod.turning.apprentice-printer.choice.enter-print-shop.requirement.0.reason": "読み書きの力がまだ足りない。",
+        "mod.turning.apprentice-printer.choice.enter-print-shop.outcomeSummary": "事務と職人仕事のあいだに、小さな道が開く。",
+      },
+      en: {},
     },
   };
 }
@@ -90,14 +104,14 @@ export function createModTemplateJson(): string {
   return `{
   // ModファイルはJSONCとして扱えます。//行コメント と /* ブロックコメント */ が使えます。
   // idは内部IDです。英数字とハイフンで書き、他のidと重ならないようにしてください。
-  // label / description / template / reason は画面に出る文章なので、日本語で自由に書けます。
+  // labelKey / descriptionKey / templateKey は localisation 内の文言keyを指します。
 
   "actions": [
     {
       // 行動ボタンを追加します。effectsは選んだターンに毎回反映されます。
       "id": "mod-observe-town",
-      "label": "街を観察する",
-      "description": "通りの変化と、人々の噂に目を向ける。",
+      "labelKey": "mod.action.observe-town.label",
+      "descriptionKey": "mod.action.observe-town.description",
       "effects": [
         // stats.mind は知性、stats.social は社交です。valueを増やすと能力が伸びます。
         { "target": "stats.mind", "value": 1 },
@@ -114,26 +128,23 @@ export function createModTemplateJson(): string {
       "weight": 3,
       // isMajorをtrueにすると、「重要な出来事まで」の自動進行がこのイベントで止まります。
       "isMajor": false,
-      // cooldownTurns は同じイベントが再登場するまでの待ちターン数です。
       "cooldownTurns": 4,
       "conditions": [
-        // ageMonthsは月齢です。120なら10歳以上で発生します。
         { "target": "ageMonths", "op": "gte", "value": 120 }
       ],
       "effects": [
         { "target": "stats.spirit", "value": 1 }
       ],
-      // templateでは {name}, {region}, {nation} が使えます。
-      "template": "{region}に雨が続く。濡れた掲示板の文字だけが、妙にはっきり見える。"
+      // templateKeyでは {name}, {region}, {nation} を含む文言をlocalisation側に置けます。
+      "templateKey": "mod.event.rainy-notice.template"
     }
   ],
 
   "traits": [
     {
-      // traitsは経歴や性質のタグ定義です。現段階では主にMod作者向けの定義として使います。
       "id": "mod-rain-reader",
-      "label": "雨読み",
-      "description": "雨の日の街から、わずかな変化を読み取る。",
+      "labelKey": "mod.trait.rain-reader.label",
+      "descriptionKey": "mod.trait.rain-reader.description",
       "tags": ["background"],
       "effects": [
         { "target": "stats.mind", "value": 1 }
@@ -143,44 +154,37 @@ export function createModTemplateJson(): string {
 
   "turningPoints": [
     {
-      // 転機イベントを追加します。発生すると、選ぶまで次の期間へ進めません。
       "id": "mod-apprentice-printer",
-      "label": "印刷所の誘い",
-      "description": "活字の匂いがする小さな仕事場から、見習いの話が届く。",
+      "labelKey": "mod.turning.apprentice-printer.label",
+      "descriptionKey": "mod.turning.apprentice-printer.description",
       "category": "career",
       "weight": 2,
       "ageWindow": {
-        // minMonthsからmaxMonthsの間に候補になります。guaranteedByMonths以降は最低保証の対象です。
         "minMonths": 168,
         "maxMonths": 240,
         "guaranteedByMonths": 216
       },
       "conditions": [
-        // 転機そのものが候補になる条件です。
         { "target": "stats.mind", "op": "gte", "value": 12 }
       ],
       "choices": [
         {
-          // 選択肢です。requirementsを満たさない場合は、理由つきで選べない状態になります。
           "id": "enter-print-shop",
-          "label": "印刷所に入る",
-          "description": "活字と紙束の間で、言葉を運ぶ仕事を覚える。",
+          "labelKey": "mod.turning.apprentice-printer.choice.enter-print-shop.label",
+          "descriptionKey": "mod.turning.apprentice-printer.choice.enter-print-shop.description",
           "requirements": [
             {
               "condition": { "target": "stats.mind", "op": "gte", "value": 12 },
-              "reason": "読み書きの力がまだ足りない。"
+              "reasonKey": "mod.turning.apprentice-printer.choice.enter-print-shop.requirement.0.reason"
             }
           ],
-          // outcomeSummaryは選択肢に表示される、数値を隠した結果説明です。
-          "outcomeSummary": "事務と職人仕事のあいだに、小さな道が開く。",
+          "outcomeSummaryKey": "mod.turning.apprentice-printer.choice.enter-print-shop.outcomeSummary",
           "effects": [
             { "target": "money", "value": 4 },
             { "target": "stats.craft", "value": 1 },
             { "target": "stats.mind", "value": 1 }
           ],
-          // grantsTagsは選択後に人生へ刻まれる経歴タグです。後続イベントの条件に使えます。
           "grantsTags": ["career.print-shop-apprentice"],
-          // careerCategoryは職域を変更します。例: labor, clerical, academic, religious, state, underground, mercantile
           "careerCategory": "clerical"
         }
       ]
@@ -188,10 +192,27 @@ export function createModTemplateJson(): string {
   ],
 
   "names": {
-    // 名前やNPC roleの候補を追加します。
-    "given": ["ノア"],
-    "family": ["活字通り"],
+    // npcRolesは内部IDです。表示名は enum.role.<id> を localisation に追加してください。
     "npcRoles": ["printer"]
+  },
+
+  "localisation": {
+    "ja": {
+      "mod.action.observe-town.label": "街を観察する",
+      "mod.action.observe-town.description": "通りの変化と、人々の噂に目を向ける。",
+      "mod.event.rainy-notice.template": "{region}に雨が続く。濡れた掲示板の文字だけが、妙にはっきり見える。",
+      "mod.trait.rain-reader.label": "雨読み",
+      "mod.trait.rain-reader.description": "雨の日の街から、わずかな変化を読み取る。",
+      "mod.turning.apprentice-printer.label": "印刷所の誘い",
+      "mod.turning.apprentice-printer.description": "活字の匂いがする小さな仕事場から、見習いの話が届く。",
+      "mod.turning.apprentice-printer.choice.enter-print-shop.label": "印刷所に入る",
+      "mod.turning.apprentice-printer.choice.enter-print-shop.description": "活字と紙束の間で、言葉を運ぶ仕事を覚える。",
+      "mod.turning.apprentice-printer.choice.enter-print-shop.requirement.0.reason": "読み書きの力がまだ足りない。",
+      "mod.turning.apprentice-printer.choice.enter-print-shop.outcomeSummary": "事務と職人仕事のあいだに、小さな道が開く。"
+    },
+    "en": {
+      // 翻訳を追加すると、言語設定がenの時に使われます。
+    }
   }
 }
 `;

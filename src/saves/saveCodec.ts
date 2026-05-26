@@ -1,4 +1,5 @@
 import type { GameState, SavePayload } from "../types/game";
+import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
 
 export const SAVE_VERSION = "0.3-ja";
 
@@ -15,11 +16,11 @@ export function importSave(raw: string): GameState {
   const parsed = JSON.parse(raw) as Partial<SavePayload>;
 
   if (parsed.version !== SAVE_VERSION) {
-    throw new Error("この保存データは古い版のため読み込めません。");
+    throw new Error(t(baseLocalisation[DEFAULT_LOCALE], "system.error.oldSave"));
   }
 
   if (!parsed.player || !parsed.world || !Array.isArray(parsed.history)) {
-    throw new Error("保存データに必要な項目がありません。");
+    throw new Error(t(baseLocalisation[DEFAULT_LOCALE], "system.error.invalidSave"));
   }
 
   return {
