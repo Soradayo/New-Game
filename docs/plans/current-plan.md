@@ -1,64 +1,59 @@
-# Localisation基盤 実装計画
+# M1 実装計画: 構造化履歴ログ
 
 ## Summary
-- Paradox系の `localisation` フォルダに近い形で、UI文言・表示名・ゲーム本文を専用フォルダへ集約する。
-- 初回は `ja` を完全移行し、`en` は空テンプレートとして同梱する。
-- actions/events/turningPoints/items/traits などのデータJSONから日本語本文を抜き、`locKey` 経由で表示する。
-- 言語切替UIを追加し、選択言語はゲームセーブではなくUI設定として `localStorage` に保存する。
-- 既存履歴ログは生成済みテキストとして保持し、言語変更後は新規ログから選択言語を使う。
+- `HistoryEntry` を表示文中心から構造化ログへ移行する。
+- 既存の `eventId` / `category` は廃止し、`sourceId` / `sourceType` / `importance` / `locKey` / `params` / `stateDiff` に置き換える。
+- 高速進行では、要約ログと実ログを同じ `summaryGroupId` で結び、UIでは要約を開閉して実ログを確認できるようにする。
+- save versionは `0.4-history` に上げ、旧saveは読み込まず新初期状態から開始する。
 
 ## Key Changes
-- `src/localisation/` を新設する。
-  - `ja.json`: 既存の日本語文言を全て移動する正本。
-  - `en.template.json`: 同じkey構造を持つ空文字または未翻訳テンプレート。
-  - `index.ts`: locale packの読み込み、選択中locale、翻訳関数、欠落key表示を提供する。
-- 文言keyは安定IDベースにする。
-  - UI: `ui.header.name`, `ui.actions.nextTurn`, `ui.tabs.history`
-  - 表示名: `enum.lifePhase.childhood`, `enum.ability.body`, `enum.region.industrial`
-  - content: `action.study.label`, `event.factory-bell.template`, `turning.first-school-crossroad.choice.support-household.outcomeSummary`
-  - system log/error: `system.error.oldSave`, `system.log.modImported`, `system.fastForward.moneyUp`
-- データJSONは文言フィールドを `locKey` 系へ置き換える。
-  - `label` -> `labelKey`
-  - `description` -> `descriptionKey`
-  - `template` -> `templateKey`
-  - 転機choiceの `reason`, `outcomeSummary`, `npcOutcomes.log` もkey化する。
-  - `names.given` / `names.family` はlocale依存の生成素材として localisation pack に移す。`names.npcRoles` はIDなので data 側に残す。
-- 実行時は raw data + locale pack から従来互換の `GameData` を生成する。
-  - systems側は当面 `label`, `description`, `template` を持つhydrated dataを受け取るため、ターン進行ロジックの変更を最小にする。
-  - locale切替時は `createContent(mods, locale)` 相当で表示用dataを再生成し、stateは維持する。
-- UIに言語設定を追加する。
-  - ヘッダーまたは操作領域に小さな `言語` segmented control を置く。
-  - 初期選択は `ja`。
-  - `en` 選択時、未翻訳keyは `missing:<key>` と表示する。
-- Mod対応を更新する。
-  - Mod templateは `labelKey` 等を使う形式へ更新する。
-  - Mod JSONに `localisation` セクションを追加できるようにする。
-  - Mod読み込み時は data と localisation を両方mergeする。
-- schema/typeを更新する。
-  - TypeScriptに raw definition 型と hydrated runtime 型を分ける。
-  - JSON Schemaは `labelKey`, `descriptionKey`, `templateKey`, `localisation` を検証対象にする。
-  - `docs/schema/localisation.schema.json` を追加する。
+- `HistoryEntry` を次の形へ更新する。
+  - `id`, `turn`, `ageMonths`, `text`
+  - `locKey?: string`
+  - `params?: Record<string, string | number>`
+  - `sourceId: string`
+  - `sourceType: "event" | "turningPoint" | "npcInteraction" | "world" | "system" | "summary"`
+  - `importance: "minor" | "normal" | "major" | "turningPoint"`
+  - `stateDiff?: HistoryStateDiff[]`
+  - `summaryGroupId?: string`
+  - `hiddenBySummary?: boolean`
+- `HistoryStateDiff` はM1では要約差分に留める。
+- hydrated `EventDefinition` に `templateKey` を残し、通常イベントログの `locKey` として保持する。
+- 転機ログ、転機選択ログ、NPC転機ログ、Mod読み込みログ、openingログ、no-eventログ、高速進行要約ログをすべて新モデルで生成する。
+- `events.ts` と `turnEngine.ts` の既存 `eventId` 参照は `sourceId/sourceType` に置換する。
+- 高速進行の実ログは削除せず、同じ `summaryGroupId` と `hiddenBySummary: true` を付ける。
+- import時に新HistoryEntry必須フィールドの最低限検証を追加する。
+
+## UI Changes
+- 履歴タブで `sourceType` と `importance` を使い、ログ種別を判別できるようにする。
+- `hiddenBySummary` の実ログは通常一覧では折りたたむ。
+- summaryログには開閉ボタンを表示する。
+- 開いた場合、同じ `summaryGroupId` を持つ実ログを時系列で表示する。
+- 既存の白黒基調を維持し、見た目の大きな再設計はしない。
 
 ## Test Plan
 - Unit tests:
-  - `ja.json` の全keyでhydrated dataが作れる。
-  - 欠落keyは `missing:<key>` になる。
-  - `actions/events/turningPoints/items/traits` の日本語文言が localisation 経由で表示される。
-  - locale切替後も `state`, selected action/stance, history は保持される。
-  - 言語切替後の新規ログは新localeで生成される。
-  - Mod templateがparse/validate/mergeでき、Mod localisationが反映される。
+  - 通常イベントログが `sourceType: "event"`, `sourceId`, `locKey`, `params`, `importance` を持つ。
+  - major eventが `importance: "major"` になる。
+  - no-eventログが `sourceType: "system"` で生成される。
+  - 転機発生ログと転機選択ログが `sourceType: "turningPoint"` になる。
+  - Mod読み込みログが `sourceType: "system"` になる。
+  - cooldownと直前重複回避が `sourceId/sourceType` で動く。
+  - 高速進行でsummaryログと実ログが同じ `summaryGroupId` を持つ。
+  - 高速進行の実ログに `hiddenBySummary: true` が付く。
+  - save export/importで構造化履歴が保持される。
+  - `0.3-ja` 以前のsaveが拒否される。
+- UI tests:
+  - 履歴にsummaryログが表示される。
+  - summaryを開くと実ログが表示される。
+  - summaryを閉じると実ログが隠れる。
 - Build:
   - `npm test`
   - `npm run build`
-- Browser smoke:
-  - 初期表示は従来どおり日本語。
-  - 言語を `en` に切り替えると未翻訳keyが見える。
-  - `ja` に戻すと日本語表示へ戻る。
-  - 次ターン、転機、タブ、Modパネルが壊れていない。
 
 ## Assumptions
-- localisation形式はJSON。
-- 初回同梱言語は `ja` と `en.template`。
-- 既存履歴ログは再翻訳しない。言語変更後の新規ログだけ選択言語を使う。
-- localisation key欠落時はfallbackせず、`missing:<key>` を表示する。
-- save versionは上げない。言語設定はsave payloadではなくUI設定localStorageで管理する。
+- `eventId` / `category` はM1で廃止し、テストも新フィールド前提に更新する。
+- 旧saveの自動移行はしない。
+- `text` は履歴固定表示として残す。
+- M1では完全なbefore/after diffは作らず、要約差分だけ保存する。
+- 既存履歴の完全再翻訳UIはM1範囲外。新規ログが再翻訳可能な情報を持つところまでを対象にする。

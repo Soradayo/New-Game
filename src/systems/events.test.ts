@@ -3,6 +3,7 @@ import type { EventDefinition, GameState } from "../types/game";
 import { createInitialState } from "../core/initialState";
 import { baseGameData } from "../data";
 import { resolveEvent } from "./events";
+import { createHistoryEntry } from "./history";
 
 describe("event resolver", () => {
   it("excludes events with unmet conditions", () => {
@@ -20,6 +21,7 @@ describe("event resolver", () => {
         weight: 100,
         conditions: [{ target: "money", op: "gte", value: 100 }],
         effects: [],
+        templateKey: "test.rich",
         template: "not this",
       },
       {
@@ -28,6 +30,7 @@ describe("event resolver", () => {
         weight: 1,
         conditions: [{ target: "money", op: "lte", value: 5 }],
         effects: [],
+        templateKey: "test.poor",
         template: "this",
       },
     ];
@@ -40,14 +43,14 @@ describe("event resolver", () => {
       ...createInitialState(baseGameData),
       turn: 2,
       history: [
-        {
+        createHistoryEntry({
           id: "turn-1",
-          eventId: "same",
           turn: 1,
           ageMonths: 78,
           text: "same",
-          category: "daily",
-        },
+          sourceId: "same",
+          sourceType: "event",
+        }),
       ],
     };
     const events: EventDefinition[] = [
@@ -57,6 +60,7 @@ describe("event resolver", () => {
         weight: 100,
         conditions: [],
         effects: [],
+        templateKey: "test.same",
         template: "same",
       },
       {
@@ -65,6 +69,7 @@ describe("event resolver", () => {
         weight: 1,
         conditions: [],
         effects: [],
+        templateKey: "test.other",
         template: "other",
       },
     ];
@@ -77,14 +82,14 @@ describe("event resolver", () => {
       ...createInitialState(baseGameData),
       turn: 3,
       history: [
-        {
+        createHistoryEntry({
           id: "turn-1",
-          eventId: "cooling",
           turn: 2,
           ageMonths: 78,
           text: "cooling",
-          category: "daily",
-        },
+          sourceId: "cooling",
+          sourceType: "event",
+        }),
       ],
     };
     const events: EventDefinition[] = [
@@ -95,6 +100,7 @@ describe("event resolver", () => {
         cooldownTurns: 2,
         conditions: [],
         effects: [],
+        templateKey: "test.cooling",
         template: "cooling",
       },
       {
@@ -103,6 +109,7 @@ describe("event resolver", () => {
         weight: 1,
         conditions: [],
         effects: [],
+        templateKey: "test.available",
         template: "available",
       },
     ];

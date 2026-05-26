@@ -5,6 +5,7 @@ import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn, advanceUntilImportantEvent } from "../systems/turnEngine";
 import { applyTurningPointChoice } from "../systems/turningPoints";
+import { createHistoryEntry } from "../systems/history";
 import { parseMod } from "../mods/mergeMods";
 import type { GameData, GameState, LocaleCode, ModData } from "../types/game";
 
@@ -124,13 +125,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const state = {
         ...get().state,
         history: [
-          {
+          createHistoryEntry({
             id: `mod-${Date.now()}`,
             turn: get().state.turn,
             ageMonths: get().state.player.ageMonths,
             text: t(data.localisation, "system.log.modImported"),
-            category: "world",
-          },
+            locKey: "system.log.modImported",
+            sourceId: "mod-import",
+            sourceType: "system",
+          }),
           ...get().state.history,
         ],
       };

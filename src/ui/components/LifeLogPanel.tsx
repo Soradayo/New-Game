@@ -1,7 +1,7 @@
 import { useGameStore } from "../../core/useGameStore";
 import { t } from "../../localisation";
 import type { HistoryEntry } from "../../types/game";
-import { categoryLabel, formatMonthsAsAge } from "../display";
+import { formatMonthsAsAge } from "../display";
 
 export function LifeLogPanel({ entries }: { entries: HistoryEntry[] }) {
   const pack = useGameStore((store) => store.data.localisation);
@@ -16,7 +16,7 @@ export function LifeLogPanel({ entries }: { entries: HistoryEntry[] }) {
               {t(pack, "ui.lifeLog.meta", {
                 turn: entry.turn,
                 age: formatMonthsAsAge(pack, entry.ageMonths),
-                category: categoryLabel(pack, entry.category),
+                category: t(pack, `enum.historySource.${entry.sourceType}`),
               })}
             </div>
             <p className="mt-1 text-sm leading-6 text-zinc-200">{entry.text}</p>

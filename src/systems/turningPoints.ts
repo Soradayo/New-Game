@@ -9,6 +9,7 @@ import type {
 import { t } from "../localisation";
 import { applyEffects } from "./effects";
 import { matchesCondition } from "./conditions";
+import { createHistoryEntry, summarizeStateDiff } from "./history";
 
 const TURNING_POINT_TRIGGER_CHANCE = 0.35;
 
@@ -89,7 +90,7 @@ export function applyTurningPointChoice(
   nextState = applyChoiceState(nextState, turningPoint, choice);
   nextState = applyNpcOutcomes(nextState, choice);
 
-  const logs = createChoiceLogs(nextState, turningPoint, choice, data);
+  const logs = createChoiceLogs(state, nextState, turningPoint, choice, data);
 
   return {
     ...nextState,
@@ -105,17 +106,23 @@ export function createTurningPointLog(
   const turningPoint = data.turningPoints.find((item) => item.id === pending.id);
   if (!turningPoint) return null;
 
-  return {
+  return createHistoryEntry({
     id: `turning-${pending.turn}-${pending.id}`,
-    eventId: `turning:${pending.id}`,
     turn: pending.turn,
     ageMonths: pending.ageMonths,
     text: t(data.localisation, "system.log.turningAppeared", {
       label: turningPoint.label,
       description: turningPoint.description,
     }),
-    category: "turningPoint",
-  };
+    locKey: "system.log.turningAppeared",
+    params: {
+      label: turningPoint.label,
+      description: turningPoint.description,
+    },
+    sourceId: pending.id,
+    sourceType: "turningPoint",
+    importance: "turningPoint",
+  });
 }
 
 function isTurningPointEligible(state: GameState, turningPoint: TurningPointDefinition): boolean {
@@ -200,32 +207,41 @@ function applyNpcOutcomes(state: GameState, choice: TurningPointChoice): GameSta
 }
 
 function createChoiceLogs(
+  beforeState: GameState,
   state: GameState,
   turningPoint: TurningPointDefinition,
   choice: TurningPointChoice,
   data: GameData,
 ): HistoryEntry[] {
-  const mainLog: HistoryEntry = {
+  const mainLog = createHistoryEntry({
     id: `turning-choice-${state.turn}-${turningPoint.id}-${choice.id}`,
-    eventId: `turning:${turningPoint.id}:${choice.id}`,
     turn: state.turn,
     ageMonths: state.player.ageMonths,
     text: t(data.localisation, "system.log.turningChoice", {
       label: choice.label,
       summary: choice.outcomeSummary,
     }),
-    category: "turningPoint",
-  };
+    locKey: "system.log.turningChoice",
+    params: {
+      label: choice.label,
+      summary: choice.outcomeSummary,
+    },
+    sourceId: `${turningPoint.id}:${choice.id}`,
+    sourceType: "turningPoint",
+    importance: "turningPoint",
+    stateDiff: summarizeStateDiff(beforeState, state),
+  });
 
   const npcLogs = (choice.npcOutcomes ?? [])
     .filter((outcome) => outcome.log)
-    .map<HistoryEntry>((outcome, index) => ({
+    .map<HistoryEntry>((outcome, index) => createHistoryEntry({
       id: `turning-npc-${state.turn}-${turningPoint.id}-${choice.id}-${index}`,
-      eventId: `turning:${turningPoint.id}:${choice.id}:npc`,
       turn: state.turn,
       ageMonths: state.player.ageMonths,
       text: outcome.log ?? "",
-      category: "relationship",
+      sourceId: `${turningPoint.id}:${choice.id}:npc:${outcome.role}`,
+      sourceType: "turningPoint",
+      importance: "turningPoint",
     }));
 
   return [mainLog, ...npcLogs];

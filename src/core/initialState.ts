@@ -1,6 +1,7 @@
 import type { GameData, GameState, Relationship } from "../types/game";
 import { SAVE_VERSION } from "../saves/saveCodec";
 import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
+import { createHistoryEntry } from "../systems/history";
 
 export function createInitialState(data: GameData, pack = baseLocalisation[DEFAULT_LOCALE]): GameState {
   const playerName = `${data.names.given[0]} ${data.names.family[0]}`;
@@ -44,13 +45,16 @@ export function createInitialState(data: GameData, pack = baseLocalisation[DEFAU
     },
     relationships: createInitialRelationships(data, pack),
     history: [
-      {
+      createHistoryEntry({
         id: "opening",
         turn: 0,
         ageMonths: 72,
         text: t(pack, "system.opening", { name: playerName }),
-        category: "daily",
-      },
+        locKey: "system.opening",
+        params: { name: playerName },
+        sourceId: "opening",
+        sourceType: "system",
+      }),
     ],
   };
 }

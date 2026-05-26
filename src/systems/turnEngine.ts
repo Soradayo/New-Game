@@ -5,6 +5,7 @@ import type { AbilityKey, GameData, GameState, HistoryEntry } from "../types/gam
 import { makeSeed } from "../utils/rng";
 import { applyEffects } from "./effects";
 import { resolveEvent } from "./events";
+import { createHistoryEntry, summarizeStateDiff } from "./history";
 import { createTurningPointLog, resolveTurningPoint } from "./turningPoints";
 
 interface TurnResult {
@@ -48,13 +49,20 @@ export function advanceUntilImportantEvent(
 
   if (current === startState || normalLogs.length === 0) return current;
 
+  const summaryGroupId = `summary-${startState.turn + 1}-${current.turn}`;
+  const normalIds = new Set(normalLogs.map((log) => log.id));
   const importantIds = new Set(importantLogs.map((log) => log.id));
-  const firstImportantIndex = current.history.findIndex((log) => importantIds.has(log.id));
-  const summary = createFastForwardSummary(startState, current, normalLogs, data);
+  const historyWithHiddenLogs = current.history.map((log) =>
+    normalIds.has(log.id)
+      ? { ...log, summaryGroupId, hiddenBySummary: true }
+      : log,
+  );
+  const firstImportantIndex = historyWithHiddenLogs.findIndex((log) => importantIds.has(log.id));
+  const summary = createFastForwardSummary(startState, current, normalLogs, data, summaryGroupId);
 
   return {
     ...current,
-    history: insertSummaryLog(current.history, summary, firstImportantIndex).slice(0, 200),
+    history: insertSummaryLog(historyWithHiddenLogs, summary, firstImportantIndex).slice(0, 200),
   };
 }
 
@@ -96,18 +104,23 @@ function advanceTurnDetailed(state: GameState, data: GameData): TurnResult {
 
   nextState = applyNpcBehavior(nextState);
 
+  const params = createTemplateParams(nextState, data);
   const text = event
-    ? renderTemplate(event.template, nextState, data)
+    ? renderTemplate(event.template, params)
     : t(data.localisation, "system.log.noEvent");
 
-  const log: HistoryEntry = {
+  const log = createHistoryEntry({
     id: `turn-${turn}`,
-    eventId: event?.id,
     turn,
     ageMonths: nextState.player.ageMonths,
     text,
-    category: event?.category ?? "daily",
-  };
+    locKey: event?.templateKey ?? "system.log.noEvent",
+    params: event ? params : undefined,
+    sourceId: event?.id ?? "no-event",
+    sourceType: event ? "event" : "system",
+    importance: event?.isMajor ? "major" : "normal",
+    stateDiff: summarizeStateDiff(state, nextState),
+  });
 
   const stateWithLog = {
     ...nextState,
@@ -186,16 +199,24 @@ function applyNpcBehavior(state: GameState): GameState {
   };
 }
 
-function renderTemplate(template: string, state: GameState, data: GameData): string {
+function createTemplateParams(state: GameState, data: GameData): Record<string, string> {
+  return {
+    name: state.player.name,
+    nation: state.world.nation,
+    region: t(data.localisation, `enum.region.${state.world.region}`),
+  };
+}
+
+function renderTemplate(template: string, params: Record<string, string>): string {
   return template
-    .replaceAll("{name}", state.player.name)
-    .replaceAll("{nation}", state.world.nation)
-    .replaceAll("{region}", t(data.localisation, `enum.region.${state.world.region}`));
+    .replaceAll("{name}", params.name)
+    .replaceAll("{nation}", params.nation)
+    .replaceAll("{region}", params.region);
 }
 
 function isImportantLog(log: HistoryEntry, data: GameData): boolean {
-  if (log.eventId?.startsWith("turning:")) return true;
-  return data.events.some((event) => event.id === log.eventId && event.isMajor);
+  if (log.importance === "turningPoint" || log.importance === "major") return true;
+  return log.sourceType === "event" && data.events.some((event) => event.id === log.sourceId && event.isMajor);
 }
 
 function createFastForwardSummary(
@@ -203,6 +224,7 @@ function createFastForwardSummary(
   end: GameState,
   normalLogs: HistoryEntry[],
   data: GameData,
+  summaryGroupId: string,
 ): HistoryEntry {
   const moneyDelta = end.player.money - start.player.money;
   const statChanges = summarizeStatChanges(start, end, data);
@@ -221,14 +243,19 @@ function createFastForwardSummary(
   if (relationshipDelta < 0) fragments.push(t(data.localisation, "system.fastForward.relationshipDown"));
   fragments.push(t(data.localisation, "system.fastForward.smallEvents", { count: normalLogs.length }));
 
-  return {
+  return createHistoryEntry({
     id: `summary-${start.turn + 1}-${end.turn}`,
-    eventId: "fast-forward-summary",
     turn: end.turn,
     ageMonths: end.player.ageMonths,
     text: `${fragments.join("。")}。`,
-    category: "daily",
-  };
+    locKey: "system.fastForward.summary",
+    params: { count: normalLogs.length, duration },
+    sourceId: "fast-forward-summary",
+    sourceType: "summary",
+    importance: "normal",
+    stateDiff: summarizeStateDiff(start, end),
+    summaryGroupId,
+  });
 }
 
 function summarizeStatChanges(start: GameState, end: GameState, data: GameData): string[] {

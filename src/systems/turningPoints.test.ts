@@ -61,6 +61,7 @@ describe("turning point system", () => {
     expect(next.player.money).toBe(state.player.money + 6);
     expect(sibling?.careerCategory).toBe("labor");
     expect(sibling?.lifeTags).toContain("household-supported");
-    expect(next.history[0].category).toBe("turningPoint");
+    expect(next.history[0].sourceType).toBe("turningPoint");
+    expect(next.history[0].importance).toBe("turningPoint");
   });
 });

@@ -10,7 +10,8 @@ export function resolveEvent(
     event.conditions.every((condition) => matchesCondition(state, condition)) &&
     isOffCooldown(state, event),
   );
-  const candidates = avoidImmediateRepeat(matchingCandidates, state.history[0]?.eventId);
+  const lastEventSourceId = state.history.find((entry) => entry.sourceType === "event")?.sourceId;
+  const candidates = avoidImmediateRepeat(matchingCandidates, lastEventSourceId);
 
   const totalWeight = candidates.reduce((sum, event) => sum + event.weight, 0);
   if (totalWeight <= 0) return null;
@@ -39,7 +40,9 @@ function isOffCooldown(state: GameState, event: EventDefinition): boolean {
   const cooldownTurns = event.cooldownTurns ?? 0;
   if (cooldownTurns <= 0) return true;
 
-  const lastOccurrence = state.history.find((entry) => entry.eventId === event.id);
+  const lastOccurrence = state.history.find((entry) =>
+    entry.sourceType === "event" && entry.sourceId === event.id,
+  );
   if (!lastOccurrence) return true;
 
   return state.turn - lastOccurrence.turn > cooldownTurns;

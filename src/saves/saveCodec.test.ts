@@ -15,13 +15,32 @@ describe("save codec", () => {
     expect(imported.pendingTurningPoint).toBeNull();
     expect(imported.world.nation).toBe(state.world.nation);
     expect(imported.history[0].text).toBe(state.history[0].text);
+    expect(imported.history[0].sourceType).toBe("system");
+    expect(imported.history[0].sourceId).toBe("opening");
     expect(imported.turn).toBe(state.turn);
   });
 
   it("rejects old save versions so stale autosaves do not leak into the new structure", () => {
     const oldState = {
       ...createInitialState(baseGameData),
-      version: "0.2-ja",
+      version: "0.3-ja",
+    };
+
+    expect(() => importSave(JSON.stringify(oldState))).toThrow();
+  });
+
+  it("rejects saves without structured history fields", () => {
+    const oldState = {
+      ...createInitialState(baseGameData),
+      version: SAVE_VERSION,
+      history: [
+        {
+          id: "old",
+          turn: 0,
+          ageMonths: 72,
+          text: "old",
+        },
+      ],
     };
 
     expect(() => importSave(JSON.stringify(oldState))).toThrow();
