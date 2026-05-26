@@ -35,7 +35,10 @@ export function App() {
     setAction,
     setStance,
     nextTurn,
+    advanceToImportantEvent,
     chooseTurningPoint,
+    devJumpToAge,
+    devForceTurningPoint,
     reset,
     exportJson,
     importJson,
@@ -121,6 +124,9 @@ export function App() {
             <button className="primary-button" disabled={Boolean(pendingTurningPoint)} onClick={nextTurn}>
               次の期間へ
             </button>
+            <button className="secondary-button" disabled={Boolean(pendingTurningPoint)} onClick={advanceToImportantEvent}>
+              重要な出来事まで
+            </button>
             <button className="secondary-button" onClick={reset}>最初から</button>
             <button className="secondary-button" onClick={() => downloadSave(exportJson())}>保存を書き出す</button>
             <button className="secondary-button" onClick={() => saveInputRef.current?.click()}>保存を読み込む</button>
@@ -134,6 +140,14 @@ export function App() {
               onExport={() => downloadJson(modDraft || createModTemplateJson(), "new-game-mod-template.jsonc")}
               onImportDraft={() => importModJson(modDraft)}
               onImportFile={() => modInputRef.current?.click()}
+            />
+          ) : null}
+          {import.meta.env.DEV ? (
+            <DevPanel
+              onJumpToYouth={() => devJumpToAge(18)}
+              onJumpToOldAge={() => devJumpToAge(65)}
+              onJumpToEnding={() => devJumpToAge(80)}
+              onForceTurningPoint={devForceTurningPoint}
             />
           ) : null}
         </section>
@@ -309,6 +323,33 @@ function ModPanel({
         onChange={(event) => onDraftChange(event.currentTarget.value)}
         placeholder="テンプレート作成を押すと、Mod JSONの雛形が入ります。"
       />
+    </section>
+  );
+}
+
+function DevPanel({
+  onJumpToYouth,
+  onJumpToOldAge,
+  onJumpToEnding,
+  onForceTurningPoint,
+}: {
+  onJumpToYouth: () => void;
+  onJumpToOldAge: () => void;
+  onJumpToEnding: () => void;
+  onForceTurningPoint: () => void;
+}) {
+  return (
+    <section className="dev-panel">
+      <div>
+        <h2 className="text-xs font-bold text-zinc-400">DEV</h2>
+        <p className="mt-1 text-xs text-zinc-500">テスト用の時間操作です。</p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <button className="secondary-button" type="button" onClick={onJumpToYouth}>18歳へ</button>
+        <button className="secondary-button" type="button" onClick={onJumpToOldAge}>65歳へ</button>
+        <button className="secondary-button" type="button" onClick={onJumpToEnding}>80歳へ</button>
+        <button className="secondary-button" type="button" onClick={onForceTurningPoint}>転機を出す</button>
+      </div>
     </section>
   );
 }

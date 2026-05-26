@@ -1,4 +1,5 @@
 import type { LifePhase } from "../types/game";
+import { STANDARD_TIME_SCALE } from "./timeScale";
 
 export function getLifePhase(ageMonths: number): LifePhase {
   const ageYears = ageMonths / 12;
@@ -13,15 +14,7 @@ export function getLifePhase(ageMonths: number): LifePhase {
 export function getTurnMonths(ageMonths: number): number {
   const phase = getLifePhase(ageMonths);
 
-  const monthsByPhase: Record<LifePhase, number> = {
-    childhood: 6,
-    youth: 3,
-    youngAdulthood: 0.5,
-    adulthood: 1,
-    oldAge: 12,
-  };
-
-  return monthsByPhase[phase];
+  return STANDARD_TIME_SCALE.turnMonths[phase];
 }
 
 export function formatAge(ageMonths: number): string {

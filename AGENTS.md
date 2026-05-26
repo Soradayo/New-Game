@@ -1,164 +1,71 @@
-# AI エージェント向け作業指示（PowerShell 5.1 / NoProfile）
-
-# 
-
-# \- 適用範囲: このファイルが置かれたフォルダ配下すべて。
-
-# 
-
-# \- UTF-8 実行ラッパ（必須・毎回付与）
-
-# &#x20; - 形式（`<COMMAND>` を実コマンドに置換）:
-
-# &#x20;   - `\[Console]::InputEncoding=\[Text.UTF8Encoding]::new($false); \[Console]::OutputEncoding=\[Text.UTF8Encoding]::new($false); $OutputEncoding=\[Text.UTF8Encoding]::new($false); chcp 65001 > $null; \& { <COMMAND> }`
-
-# 
-
-# \- ファイル書き込みの Encoding 指定（必須）
-
-# &#x20; - `Out-File -Encoding utf8` / `Set-Content -Encoding utf8` / `Add-Content -Encoding utf8`
-
-
-
-# 
-
 # AGENTS.md
 
-## プロジェクト概要
+## 適用範囲
 
-このプロジェクトは、ブラウザで動作するオフライン対応のテキスト駆動ライフシミュレーションゲームです。
+このファイルが置かれたフォルダ配下すべてに適用します。
 
-プレイヤーは、産業化、資本主義、宗教制度、台頭する革命思想に影響を受けた、近代に近い架空世界で一生を過ごします。
+このファイルは、AIエージェントが作業時に必ず守る運用ルールだけを記載します。
+プロジェクト思想や設計方針の詳細は、次を参照してください。
 
-目的は勝利ではありません。ひとつの人生を解釈することです。
+- `docs/project-guidelines.md`
+- `specs/00-project/spec.md`
+- `specs/01-architecture/spec.md`
+- `specs/02-core-loop/spec.md`
+- `specs/03-world/spec.md`
+- `specs/04-events/spec.md`
+- `specs/05-ui/spec.md`
+- `specs/06-save-mod/spec.md`
+- `specs/07-mvp/spec.md`
+- `docs/plans/current-plan.md`
 
-このプロジェクトは、リプレイ性、因果、創発的な物語、Mod対応を重視します。
+## シェルとPowerShell運用
 
-## 中核思想
+WindowsでPowerShellを使う場合は、Windows PowerShell 5.1ではなくPowerShell 7 (`pwsh`) を使ってください。
 
-優先すること:
+理由:
 
-* プレイヤーによる解釈
-* リプレイ性
-* 因果
-* 創発的な物語
-* 軽量なアーキテクチャ
-* JSON-driven content
-* Modしやすさ
-* 保守性
-* 小さく再利用しやすいコンポーネント
+- PowerShell 7系はPowerShell 6以降の文字エンコード挙動に従い、既定のテキスト出力がUTF-8 no BOMです。
+- Windows PowerShell 5.1はコマンドレットごとの既定エンコードが一貫せず、日本語を含むファイルや標準出力で文字化けしやすいです。
 
-避けること:
+推奨起動例:
 
-* ハードコードされた分岐ロジック
-* 巨大なファイル
-* 過剰な継承
-* 現実らしさのための複雑すぎるシミュレーション
-* 不要な抽象化
-* ゲームエンジン風の過剰設計
-* ランタイムAI生成コンテンツ
+```powershell
+pwsh
+```
 
-## 技術ルール
+日本語が文字化けする場合は、PowerShell 7で次を実行してから作業してください。
 
-スタック:
+```powershell
+[Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+```
 
-* TypeScript
-* React
-* Vite
-* Zustand
-* TailwindCSS
+必要に応じて、現在のコンソールコードページもUTF-8にします。
 
-ゲームは完全にオフラインで動作しなければなりません。
+```powershell
+chcp 65001
+```
 
-ゲームエンジンは導入しません。
+ファイル読み書き時の注意:
 
-コードはモジュール化し、小さなファイルに分割します。
+- 日本語を含むファイルはUTF-8として扱います。
+- `Get-Content`, `Set-Content`, `Out-File` などを使う場合は、必要に応じて `-Encoding utf8` を明示してください。
+- リダイレクト `>` / `>>` は環境によってエンコード差が出やすいため、日本語を含む内容の書き込みには避けるか、`Out-File -Encoding utf8` を使ってください。
+- PowerShell表示上の文字化けだけで、実ファイルが破損していない場合があります。確認は `npm test`, `npm run build`, ブラウザ表示、またはUTF-8対応エディタで行ってください。
 
-純粋関数を優先します。
+参考:
 
-## Data-first architecture
+- Microsoft Learn: about_Character_Encoding
+  - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_character_encoding
+  - https://learn.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_character_encoding
 
-ゲームコンテンツはデータ駆動でなければなりません。
+## 作業ルール
 
-可能な限り、すべてのコンテンツはJSONに置きます。
-
-例:
-
-* events
-* traits
-* organizations
-* nations
-* items
-* text templates
-
-ゲームコンテンツをソースコードにハードコードすることは避けます。
-
-ロジックはコンテンツを直接記述するのではなく、データを解釈します。
-
-## Mod対応
-
-Modは第一級の要件です。
-
-Modはプレーンテキストエディタで作成できなければなりません。
-
-ModはJSONだけで作れるべきです。
-
-MVPでは、Lua、JS実行、evalなどのスクリプト言語は使いません。
-
-ゲーム起動時に base data と mod data をマージします。
-
-## イベントシステムのルール
-
-ネストした条件分岐より、重み付き計算を優先します。
-
-if/else の連鎖は避けます。
-
-使用するもの:
-
-* conditions
-* weights
-* effects
-* templates
-
-イベントは解釈しやすく、短く、再利用しやすいものにします。
-
-結果を説明しすぎないようにします。
-
-プレイヤーの想像の余地を残します。
-
-## UI方針
-
-テキストファーストのUIにします。
-
-キャラクター画像は使いません。
-
-数値はゲームプレイを支えますが、ログを主役にします。
-
-ログは簡潔に保ちます。
-
-長すぎる散文は避けます。
-
-## 保存
-
-必須機能:
-
-* autosave
-* import save
-* export save
-
-JSON export は必須です。
-
-version フィールドを使い、後方互換性を考慮します。
-
-## コーディングスタイル
-
-ファイルは小さく保ちます。
-
-責務は積極的に分割します。
-
-組み合わせ可能なシステムを優先します。
-
-「god class」は作りません。
-
-常に Codex のコンテキスト効率を意識します。
-
+- 作業前に、関連する `docs/`, `specs/`, `src/` を確認してください。
+- 手動編集では `apply_patch` を優先してください。
+- 無関係な変更やユーザー変更を巻き戻してはいけません。
+- 既存の `docs/plans/current-plan.md` 運用を守ってください。
+- 新しいデータ型を追加した場合は、TypeScript型、JSON Schema、base data、Mod template、unit tests を同時に更新してください。
+- 保存構造を破壊的に変更する場合は、save versionを上げ、旧saveの扱いを明示してください。

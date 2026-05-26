@@ -18,6 +18,7 @@ export function createModTemplate(): ModData {
         id: "mod-rainy-notice",
         category: "daily",
         weight: 3,
+        isMajor: false,
         cooldownTurns: 4,
         conditions: [
           { target: "ageMonths", op: "gte", value: 120 },
@@ -111,6 +112,8 @@ export function createModTemplateJson(): string {
       "id": "mod-rainy-notice",
       "category": "daily",
       "weight": 3,
+      // isMajorをtrueにすると、「重要な出来事まで」の自動進行がこのイベントで止まります。
+      "isMajor": false,
       // cooldownTurns は同じイベントが再登場するまでの待ちターン数です。
       "cooldownTurns": 4,
       "conditions": [

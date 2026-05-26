@@ -139,6 +139,7 @@ export interface EventDefinition {
   id: string;
   category: "daily" | "relationship" | "turningPoint" | "world";
   weight: number;
+  isMajor?: boolean;
   cooldownTurns?: number;
   conditions: Condition[];
   effects: Effect[];

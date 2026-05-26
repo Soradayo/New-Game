@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createInitialState } from "./initialState";
 import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
-import { advanceTurn } from "../systems/turnEngine";
+import { advanceTurn, advanceUntilImportantEvent } from "../systems/turnEngine";
 import { applyTurningPointChoice } from "../systems/turningPoints";
 import { parseMod } from "../mods/mergeMods";
 import type { GameData, GameState } from "../types/game";
@@ -16,7 +16,10 @@ interface GameStore {
   setAction: (actionId: string) => void;
   setStance: (stanceId: string) => void;
   nextTurn: () => void;
+  advanceToImportantEvent: () => void;
   chooseTurningPoint: (choiceId: string) => void;
+  devJumpToAge: (ageYears: number) => void;
+  devForceTurningPoint: () => void;
   reset: () => void;
   exportJson: () => string;
   importJson: (raw: string) => void;
@@ -38,6 +41,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     persistState(next);
     set({ state: next, error: null });
   },
+  advanceToImportantEvent: () => {
+    const next = advanceUntilImportantEvent(get().state, get().data);
+    persistState(next);
+    set({ state: next, error: null });
+  },
   chooseTurningPoint: (choiceId) => {
     try {
       const next = applyTurningPointChoice(get().state, get().data, choiceId);
@@ -46,6 +54,39 @@ export const useGameStore = create<GameStore>((set, get) => ({
     } catch (error) {
       set({ error: error instanceof Error ? error.message : "転機の選択に失敗しました。" });
     }
+  },
+  devJumpToAge: (ageYears) => {
+    const next = {
+      ...get().state,
+      pendingTurningPoint: null,
+      player: {
+        ...get().state.player,
+        ageMonths: Math.max(72, Math.round(ageYears * 12)),
+      },
+    };
+    persistState(next);
+    set({ state: next, error: null });
+  },
+  devForceTurningPoint: () => {
+    const state = get().state;
+    const forced = get().data.turningPoints.find((turningPoint) =>
+      !state.player.lifeTags.some((tag) => tag.startsWith(`turning.${turningPoint.id}.`)),
+    );
+    if (!forced) {
+      set({ error: "発生できる転機がありません。" });
+      return;
+    }
+
+    const next = {
+      ...state,
+      pendingTurningPoint: {
+        id: forced.id,
+        turn: state.turn,
+        ageMonths: state.player.ageMonths,
+      },
+    };
+    persistState(next);
+    set({ state: next, error: null });
   },
   reset: () => {
     const next = createInitialState(get().data);

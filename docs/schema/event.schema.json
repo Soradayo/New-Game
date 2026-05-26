@@ -18,6 +18,9 @@
       "type": "integer",
       "minimum": 0
     },
+    "isMajor": {
+      "type": "boolean"
+    },
     "conditions": {
       "type": "array",
       "items": { "$ref": "https://new-game.local/schema/condition.schema.json" }

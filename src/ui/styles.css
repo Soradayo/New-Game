@@ -205,6 +205,11 @@ input:focus-visible {
     resize: vertical;
     tab-size: 2;
   }
+
+  .dev-panel {
+    @apply flex flex-wrap items-center justify-between gap-3 border-2 border-zinc-500 bg-black p-3 text-white;
+    border-radius: 0;
+  }
 }
 
 main {

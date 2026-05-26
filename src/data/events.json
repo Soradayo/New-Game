@@ -101,6 +101,7 @@
     "id": "union-pamphlet",
     "category": "turningPoint",
     "weight": 3,
+    "isMajor": true,
     "cooldownTurns": 6,
     "conditions": [
       { "target": "stats.social", "op": "gte", "value": 14 }
