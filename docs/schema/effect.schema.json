@@ -3,35 +3,110 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Effect",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["target", "value"],
-  "properties": {
-    "target": {
-      "anyOf": [
-        {
-          "enum": [
-            "money",
-            "world.pressure",
-            "stats.body",
-            "stats.mind",
-            "stats.craft",
-            "stats.social",
-            "stats.spirit",
-            "relationship.all",
-            "inventory.add"
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": {
+          "anyOf": [
+            {
+              "enum": [
+                "money",
+                "world.pressure",
+                "stats.body",
+                "stats.mind",
+                "stats.craft",
+                "stats.social",
+                "stats.spirit",
+                "relationship.all"
+              ]
+            },
+            {
+              "type": "string",
+              "pattern": "^relationship\\.(?!all$)([a-zA-Z0-9][a-zA-Z0-9-]*)$"
+            }
           ]
         },
-        {
-          "type": "string",
-          "pattern": "^relationship\\.[a-zA-Z0-9][a-zA-Z0-9-]*$"
-        }
-      ]
+        "value": { "type": "number" }
+      }
     },
-    "value": {
-      "oneOf": [
-        { "type": "number" },
-        { "type": "string", "minLength": 1 }
-      ]
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": { "enum": ["world.region"] },
+        "value": {
+          "enum": ["capital", "industrial", "academic", "religious", "frontier"]
+        }
+      }
+    },
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.careerCategory$"
+        },
+        "value": {
+          "enum": ["none", "labor", "clerical", "academic", "religious", "state", "underground", "mercantile"]
+        }
+      }
+    },
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.educationLevel$"
+        },
+        "value": {
+          "enum": ["none", "primary", "secondary", "vocational", "higher", "nightSchool"]
+        }
+      }
+    },
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.affiliation$"
+        },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    {
+      "additionalProperties": false,
+      "required": ["target", "value"],
+      "properties": {
+        "target": {
+          "anyOf": [
+            {
+              "enum": [
+                "world.tags.add",
+                "world.tags.remove",
+                "relationship.all.lifeTags.add",
+                "relationship.all.lifeTags.remove",
+                "relationship.all.traits.add",
+                "relationship.all.traits.remove",
+                "player.lifeTags.add",
+                "player.lifeTags.remove",
+                "player.traits.add",
+                "player.traits.remove",
+                "inventory.add"
+              ]
+            },
+            {
+              "type": "string",
+              "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.(lifeTags|traits)\\.(add|remove)$"
+            }
+          ]
+        },
+        "value": { "type": "string", "minLength": 1 }
+      }
     }
-  }
+  ]
 }

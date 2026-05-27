@@ -57,6 +57,7 @@ export interface Player {
   educationLevel: EducationLevel;
   careerCategory: CareerCategory;
   lifeTags: string[];
+  traits: string[];
   stats: Stats;
   inventory: string[];
 }
@@ -69,7 +70,9 @@ export interface Relationship {
   ageMonths: number;
   educationLevel: EducationLevel;
   careerCategory: CareerCategory;
+  affiliation: string;
   lifeTags: string[];
+  traits: string[];
 }
 
 export interface WorldState {
@@ -78,6 +81,7 @@ export interface WorldState {
   region: Region;
   organizations: Record<OrganizationKind, string>;
   pressure: number;
+  tags: string[];
 }
 
 export type HistorySourceType =
@@ -132,8 +136,26 @@ export interface SavePayload extends GameState {}
 export type EffectTarget =
   | "money"
   | "world.pressure"
+  | "world.region"
+  | "world.tags.add"
+  | "world.tags.remove"
   | `stats.${AbilityKey}`
   | `relationship.${"all" | string}`
+  | "relationship.all.lifeTags.add"
+  | "relationship.all.lifeTags.remove"
+  | "relationship.all.traits.add"
+  | "relationship.all.traits.remove"
+  | `relationship.${string}.lifeTags.add`
+  | `relationship.${string}.lifeTags.remove`
+  | `relationship.${string}.traits.add`
+  | `relationship.${string}.traits.remove`
+  | `relationship.${string}.affiliation`
+  | `relationship.${string}.careerCategory`
+  | `relationship.${string}.educationLevel`
+  | "player.lifeTags.add"
+  | "player.lifeTags.remove"
+  | "player.traits.add"
+  | "player.traits.remove"
   | "inventory.add";
 
 export interface Effect {
@@ -147,11 +169,39 @@ export type LocalisationValue = string | string[];
 
 export type LocalisationPack = Record<string, LocalisationValue>;
 
-export interface Condition {
-  target: "ageMonths" | "money" | "world.pressure" | `stats.${AbilityKey}`;
-  op: "gt" | "gte" | "lt" | "lte" | "eq";
-  value: number;
+export type ConditionOp = "gt" | "gte" | "lt" | "lte" | "eq" | "neq" | "has" | "notHas";
+
+export type ConditionTarget =
+  | "ageMonths"
+  | "money"
+  | "world.pressure"
+  | `stats.${AbilityKey}`
+  | `relationship.${string}.bond`
+  | "educationLevel"
+  | "careerCategory"
+  | "socialClass"
+  | "affiliation"
+  | `relationship.${string}.careerCategory`
+  | `relationship.${string}.educationLevel`
+  | `relationship.${string}.affiliation`
+  | "world.region"
+  | "player.lifeTags"
+  | "player.traits"
+  | `relationship.${string}.lifeTags`
+  | `relationship.${string}.traits`
+  | "world.tags";
+
+export interface AtomicCondition {
+  target: ConditionTarget;
+  op: ConditionOp;
+  value: number | string;
 }
+
+export type Condition =
+  | AtomicCondition
+  | { all: Condition[] }
+  | { any: Condition[] }
+  | { not: Condition };
 
 export interface GameAction {
   id: string;

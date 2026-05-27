@@ -21,10 +21,17 @@ export function createModTemplate(): ModData {
         isMajor: false,
         cooldownTurns: 4,
         conditions: [
-          { target: "ageMonths", op: "gte", value: 120 },
+          {
+            all: [
+              { target: "ageMonths", op: "gte", value: 120 },
+              { target: "world.tags", op: "notHas", value: "festival-season" },
+            ],
+          },
         ],
         effects: [
           { target: "stats.spirit", value: 1 },
+          { target: "player.traits.add", value: "mod-rain-reader" },
+          { target: "world.tags.add", value: "festival-season" },
         ],
         templateKey: "mod.event.rainy-notice.template",
       },
@@ -71,6 +78,8 @@ export function createModTemplate(): ModData {
               { target: "money", value: 4 },
               { target: "stats.craft", value: 1 },
               { target: "stats.mind", value: 1 },
+              { target: "player.lifeTags.add", value: "career.print-shop-apprentice" },
+              { target: "relationship.mentor.traits.add", value: "mod-rain-reader" },
             ],
             grantsTags: ["career.print-shop-apprentice"],
             careerCategory: "clerical",
@@ -130,10 +139,19 @@ export function createModTemplateJson(): string {
       "isMajor": false,
       "cooldownTurns": 4,
       "conditions": [
-        { "target": "ageMonths", "op": "gte", "value": 120 }
+        // conditions配列は暗黙ANDです。さらに単体conditionとして all / any / not を入れ子にできます。
+        {
+          "all": [
+            { "target": "ageMonths", "op": "gte", "value": 120 },
+            { "target": "world.tags", "op": "notHas", "value": "festival-season" }
+          ]
+        }
       ],
       "effects": [
-        { "target": "stats.spirit", "value": 1 }
+        { "target": "stats.spirit", "value": 1 },
+        // player.traits.add/remove で特性の付与・削除、world.tags.add/remove で世界タグを操作します。
+        { "target": "player.traits.add", "value": "mod-rain-reader" },
+        { "target": "world.tags.add", "value": "festival-season" }
       ],
       // templateKeyでは {name}, {region}, {nation} を含む文言をlocalisation側に置けます。
       "templateKey": "mod.event.rainy-notice.template"
@@ -165,7 +183,12 @@ export function createModTemplateJson(): string {
         "guaranteedByMonths": 216
       },
       "conditions": [
-        { "target": "stats.mind", "op": "gte", "value": 12 }
+        {
+          "any": [
+            { "target": "stats.mind", "op": "gte", "value": 12 },
+            { "target": "player.traits", "op": "has", "value": "mod-rain-reader" }
+          ]
+        }
       ],
       "choices": [
         {
@@ -182,7 +205,11 @@ export function createModTemplateJson(): string {
           "effects": [
             { "target": "money", "value": 4 },
             { "target": "stats.craft", "value": 1 },
-            { "target": "stats.mind", "value": 1 }
+            { "target": "stats.mind", "value": 1 },
+            // lifeTagsは経歴や人生分岐、traitsは性質や獲得特性に使います。
+            { "target": "player.lifeTags.add", "value": "career.print-shop-apprentice" },
+            // relationship.<id>.traits.add の <id> は初期NPCのrole/idと対応します。
+            { "target": "relationship.mentor.traits.add", "value": "mod-rain-reader" }
           ],
           "grantsTags": ["career.print-shop-apprentice"],
           "careerCategory": "clerical"

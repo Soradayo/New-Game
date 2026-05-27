@@ -16,11 +16,12 @@ export function createInitialState(data: GameData, pack = baseLocalisation[DEFAU
       name: playerName,
       ageMonths: 72,
       socialClass: "worker",
-      affiliation: t(pack, "world.affiliation.none"),
+      affiliation: "none",
       money: 12,
       educationLevel: "primary",
       careerCategory: "none",
       lifeTags: [],
+      traits: [],
       stats: {
         body: 10,
         mind: 10,
@@ -42,6 +43,7 @@ export function createInitialState(data: GameData, pack = baseLocalisation[DEFAU
         underground: t(pack, "world.organization.underground"),
       },
       pressure: 12,
+      tags: [],
     },
     relationships: createInitialRelationships(data, pack),
     history: [
@@ -68,6 +70,8 @@ function createInitialRelationships(data: GameData, pack = baseLocalisation[DEFA
     ageMonths: 72 + index * 12,
     educationLevel: "primary",
     careerCategory: "none",
+    affiliation: "none",
     lifeTags: [],
+    traits: [],
   }));
 }

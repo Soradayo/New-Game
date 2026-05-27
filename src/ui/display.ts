@@ -44,6 +44,19 @@ export function roleLabel(pack: LocalisationPack, value: string): string {
   return translated.startsWith("missing:") ? value : translated;
 }
 
+export function affiliationLabel(pack: LocalisationPack, value: string): string {
+  const translated = t(pack, `affiliation.${value}.label`);
+  if (!translated.startsWith("missing:")) return translated;
+
+  const legacy = t(pack, `world.affiliation.${value}`);
+  return legacy.startsWith("missing:") ? value : legacy;
+}
+
+export function tagLabel(pack: LocalisationPack, value: string): string {
+  const translated = t(pack, `tag.${value}.label`);
+  return translated.startsWith("missing:") ? value : translated;
+}
+
 export function categoryLabel(pack: LocalisationPack, value: EventDefinition["category"] | string): string {
   const translated = t(pack, `enum.category.${value}`);
   return translated.startsWith("missing:") ? value : translated;

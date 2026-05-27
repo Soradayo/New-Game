@@ -1,7 +1,7 @@
 import type { GameState, SavePayload } from "../types/game";
 import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
 
-export const SAVE_VERSION = "0.4-history";
+export const SAVE_VERSION = "0.6-causality-hardening";
 
 export function exportSave(state: GameState): string {
   const payload: SavePayload = {
@@ -19,7 +19,16 @@ export function importSave(raw: string): GameState {
     throw new Error(t(baseLocalisation[DEFAULT_LOCALE], "system.error.oldSave"));
   }
 
-  if (!parsed.player || !parsed.world || !Array.isArray(parsed.history) || !isStructuredHistory(parsed.history)) {
+  if (
+    !parsed.player ||
+    !parsed.world ||
+    !isCausalityPlayer(parsed.player) ||
+    !isCausalityWorld(parsed.world) ||
+    !Array.isArray(parsed.relationships) ||
+    !isCausalityRelationships(parsed.relationships) ||
+    !Array.isArray(parsed.history) ||
+    !isStructuredHistory(parsed.history)
+  ) {
     throw new Error(t(baseLocalisation[DEFAULT_LOCALE], "system.error.invalidSave"));
   }
 
@@ -31,9 +40,43 @@ export function importSave(raw: string): GameState {
     pendingTurningPoint: parsed.pendingTurningPoint ?? null,
     player: parsed.player,
     world: parsed.world,
-    relationships: parsed.relationships ?? [],
+    relationships: parsed.relationships,
     history: parsed.history,
   };
+}
+
+function isCausalityPlayer(player: unknown): boolean {
+  return (
+    typeof player === "object" &&
+    player !== null &&
+    typeof (player as { affiliation?: unknown }).affiliation === "string" &&
+    (player as { affiliation: string }).affiliation.length > 0 &&
+    isStringArray((player as { lifeTags?: unknown }).lifeTags) &&
+    isStringArray((player as { traits?: unknown }).traits)
+  );
+}
+
+function isCausalityWorld(world: unknown): boolean {
+  return (
+    typeof world === "object" &&
+    world !== null &&
+    isStringArray((world as { tags?: unknown }).tags)
+  );
+}
+
+function isCausalityRelationships(relationships: unknown[]): boolean {
+  return relationships.every((relationship) =>
+    typeof relationship === "object" &&
+    relationship !== null &&
+    typeof (relationship as { affiliation?: unknown }).affiliation === "string" &&
+    (relationship as { affiliation: string }).affiliation.length > 0 &&
+    isStringArray((relationship as { lifeTags?: unknown }).lifeTags) &&
+    isStringArray((relationship as { traits?: unknown }).traits)
+  );
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 function isStructuredHistory(history: unknown[]): boolean {

@@ -65,6 +65,17 @@ export function ActionControls({
         <button className="secondary-button" onClick={onImportSave}>{t(pack, "ui.actions.importSave")}</button>
         <button className="secondary-button" onClick={onToggleModPanel}>{t(pack, "ui.mod.title")}</button>
       </div>
+      <div className={`mobile-action-bar ${isBlocked ? "mobile-action-bar-hidden" : ""}`}>
+        <button className="primary-button mobile-action-button" disabled={isBlocked} onClick={onNextTurn}>
+          {t(pack, "ui.actions.nextTurn")}
+        </button>
+        <button className="secondary-button mobile-action-button" disabled={isBlocked} onClick={onAdvanceToImportantEvent}>
+          {t(pack, "ui.actions.advanceImportant")}
+        </button>
+        <button className="secondary-button mobile-action-button" onClick={onToggleModPanel}>
+          {t(pack, "ui.mod.title")}
+        </button>
+      </div>
       {children}
     </section>
   );

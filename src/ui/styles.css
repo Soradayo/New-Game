@@ -18,6 +18,7 @@ body {
   margin: 0;
   min-width: 320px;
   background: #000;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 button,
@@ -210,6 +211,16 @@ input:focus-visible {
     @apply flex flex-wrap items-center justify-between gap-3 border-2 border-zinc-500 bg-black p-3 text-white;
     border-radius: 0;
   }
+
+  .summary-toggle-button {
+    @apply border border-white bg-black px-2 py-1 text-xs font-bold text-white transition;
+    border-radius: 0;
+  }
+
+  .summary-toggle-button:hover {
+    background: #fff;
+    color: #000;
+  }
 }
 
 main {
@@ -233,6 +244,10 @@ main > section {
   display: flex;
   align-items: stretch;
   background: #000;
+}
+
+.mobile-action-bar {
+  display: none;
 }
 
 header,
@@ -262,4 +277,37 @@ article p::before {
 
 .h-2.rounded.bg-zinc-800 > .h-2 {
   height: 10px;
+}
+
+@media (max-width: 767px) {
+  main {
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-action-bar {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 0.7fr;
+    gap: 6px;
+    border-top: 2px solid #f2f2f2;
+    background: #000;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-action-bar-hidden {
+    display: none;
+  }
+
+  .mobile-action-button {
+    min-height: 44px;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+    line-height: 1.25;
+    box-shadow: none;
+  }
 }

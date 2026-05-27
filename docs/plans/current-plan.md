@@ -1,59 +1,47 @@
-# M1 実装計画: 構造化履歴ログ
+# M2後始末 実装計画: 因果モデルの境界強化
 
 ## Summary
-- `HistoryEntry` を表示文中心から構造化ログへ移行する。
-- 既存の `eventId` / `category` は廃止し、`sourceId` / `sourceType` / `importance` / `locKey` / `params` / `stateDiff` に置き換える。
-- 高速進行では、要約ログと実ログを同じ `summaryGroupId` で結び、UIでは要約を開閉して実ログを確認できるようにする。
-- save versionは `0.4-history` に上げ、旧saveは読み込まず新初期状態から開始する。
+- Game Studioレビューで出た P1/P2 をまとめて修正する。
+- 状態に表示文言が混ざる問題を解消し、`affiliation` / tags / traits を内部IDとして扱う。
+- Mod schemaを厳格化し、壊れたcondition/effectが実行時に無音で混ざらないようにする。
+- save構造の意味が変わるため、save versionを `0.6-causality-hardening` に上げ、旧saveは破棄する。
 
 ## Key Changes
-- `HistoryEntry` を次の形へ更新する。
-  - `id`, `turn`, `ageMonths`, `text`
-  - `locKey?: string`
-  - `params?: Record<string, string | number>`
-  - `sourceId: string`
-  - `sourceType: "event" | "turningPoint" | "npcInteraction" | "world" | "system" | "summary"`
-  - `importance: "minor" | "normal" | "major" | "turningPoint"`
-  - `stateDiff?: HistoryStateDiff[]`
-  - `summaryGroupId?: string`
-  - `hiddenBySummary?: boolean`
-- `HistoryStateDiff` はM1では要約差分に留める。
-- hydrated `EventDefinition` に `templateKey` を残し、通常イベントログの `locKey` として保持する。
-- 転機ログ、転機選択ログ、NPC転機ログ、Mod読み込みログ、openingログ、no-eventログ、高速進行要約ログをすべて新モデルで生成する。
-- `events.ts` と `turnEngine.ts` の既存 `eventId` 参照は `sourceId/sourceType` に置換する。
-- 高速進行の実ログは削除せず、同じ `summaryGroupId` と `hiddenBySummary: true` を付ける。
-- import時に新HistoryEntry必須フィールドの最低限検証を追加する。
-
-## UI Changes
-- 履歴タブで `sourceType` と `importance` を使い、ログ種別を判別できるようにする。
-- `hiddenBySummary` の実ログは通常一覧では折りたたむ。
-- summaryログには開閉ボタンを表示する。
-- 開いた場合、同じ `summaryGroupId` を持つ実ログを時系列で表示する。
-- 既存の白黒基調を維持し、見た目の大きな再設計はしない。
+- `player.affiliation` / `relationship.affiliation` の初期値は表示文ではなく `"none"` にする。
+- UIでは `affiliation.<id>.label` または既存 `world.affiliation.none` を解決し、欠落時はIDを表示する。
+- `lifeTags` / `world.tags` は `tag.<id>.label` をlocalisationから解決し、欠落時はIDを表示する。
+- 右側の人間関係パネルでは `lifeTags` と `traits` を混在表示せず、短い別行表示に分ける。
+- 転機中のモバイルsticky操作バーは非表示、または転機overlayより下のz-indexにして、割り込み選択を優先する。
+- `readConditionValue()` が `undefined` を返す場合、`eq` / `neq` / 数値比較 / membership はすべてfalseにする。
+- `all` / `any` はschemaで `minItems: 1` を要求する。
+- `condition.schema.json` は numeric / string / list condition を `oneOf` で分離する。
+- `effect.schema.json` は target種別ごとに value型を分離する。
+- `world.region`, `educationLevel`, `careerCategory` は既存enum値のみ許可する。
+- `relationship.all.affiliation/careerCategory/educationLevel` はschemaで拒否する。
+- `SAVE_VERSION` を `0.6-causality-hardening` に更新する。
+- import時に tags/traits/lifeTags が string[] で、`affiliation` が空でないstringであることを検証する。
 
 ## Test Plan
 - Unit tests:
-  - 通常イベントログが `sourceType: "event"`, `sourceId`, `locKey`, `params`, `importance` を持つ。
-  - major eventが `importance: "major"` になる。
-  - no-eventログが `sourceType: "system"` で生成される。
-  - 転機発生ログと転機選択ログが `sourceType: "turningPoint"` になる。
-  - Mod読み込みログが `sourceType: "system"` になる。
-  - cooldownと直前重複回避が `sourceId/sourceType` で動く。
-  - 高速進行でsummaryログと実ログが同じ `summaryGroupId` を持つ。
-  - 高速進行の実ログに `hiddenBySummary: true` が付く。
-  - save export/importで構造化履歴が保持される。
-  - `0.3-ja` 以前のsaveが拒否される。
+  - 初期 `affiliation` が `"none"` で、UI表示は日本語の「なし」になる。
+  - `affiliation eq "none"` が成立する。
+  - 存在しない `relationship.<id>.* neq ...` がfalseになる。
+  - 不正effectをschemaで拒否する。
+  - 不正conditionをschemaで拒否する。
+  - `relationship.all.affiliation` 系effectをschemaで拒否する。
+  - save importで string[] 以外の tags/traits を拒否する。
+  - `0.5-causality` 以前のsaveを拒否する。
 - UI tests:
-  - 履歴にsummaryログが表示される。
-  - summaryを開くと実ログが表示される。
-  - summaryを閉じると実ログが隠れる。
-- Build:
+  - lifeTags / world.tags がlocalisation経由で表示され、未翻訳IDでも落ちない。
+  - 人間関係パネルで経歴タグと特性が区別される。
+  - モバイル幅で転機中にsticky操作バーが転機選択を覆わない。
+- Verification:
   - `npm test`
   - `npm run build`
+  - Playwright smoke: 初期表示、転機表示、タグ表示、言語切替、console error/warningなし。
 
 ## Assumptions
-- `eventId` / `category` はM1で廃止し、テストも新フィールド前提に更新する。
-- 旧saveの自動移行はしない。
-- `text` は履歴固定表示として残す。
-- M1では完全なbefore/after diffは作らず、要約差分だけ保存する。
-- 既存履歴の完全再翻訳UIはM1範囲外。新規ログが再翻訳可能な情報を持つところまでを対象にする。
+- P3の「因果情報を所持品タブから独立させる」再設計はM3前のUI整理に回す。
+- tagsは `tag.<id>.label` のlocalisation解決を標準とし、欠落時はID表示にする。
+- `affiliation` は当面自由な内部ID文字列を許すが、既知IDはlocalisationで表示名を持たせる。
+- Runtime側ではschemaを通過したデータを前提にしつつ、save importだけは破損データ防御を強める。

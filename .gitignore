@@ -4,6 +4,7 @@ dist/
 *.local
 *.log
 coverage/
+.tmp/
 
 # Playwright
 /test-results/

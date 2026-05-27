@@ -38,6 +38,67 @@ describe("game data schema validation", () => {
     }))).toThrow("/actions/0/effects/0/target");
   });
 
+  it("rejects a mod with an invalid condition target", () => {
+    expect(() => parseMod(JSON.stringify({
+      events: [
+        {
+          id: "bad-condition-target",
+          category: "daily",
+          weight: 1,
+          conditions: [
+            { target: "relationship.all.traits", op: "has", value: "witness" },
+          ],
+          effects: [],
+          templateKey: "test.bad.template",
+        },
+      ],
+    }))).toThrow("/events/0/conditions/0");
+  });
+
+  it("rejects condition op and value combinations that do not match the target kind", () => {
+    for (const condition of [
+      { target: "money", op: "has", value: "coin" },
+      { target: "player.traits", op: "gt", value: 1 },
+      { target: "world.region", op: "gte", value: 1 },
+      { all: [] },
+      { any: [] },
+    ]) {
+      expect(() => parseMod(JSON.stringify({
+        events: [
+          {
+            id: "bad-condition-shape",
+            category: "daily",
+            weight: 1,
+            conditions: [condition],
+            effects: [],
+            templateKey: "test.bad.template",
+          },
+        ],
+      }))).toThrow("/events/0/conditions/0");
+    }
+  });
+
+  it("rejects effect values that do not match the target kind", () => {
+    for (const effect of [
+      { target: "money", value: "5" },
+      { target: "inventory.add", value: 1 },
+      { target: "world.region", value: "moon" },
+      { target: "relationship.mentor.educationLevel", value: "pirate" },
+      { target: "relationship.all.affiliation", value: "guild" },
+    ]) {
+      expect(() => parseMod(JSON.stringify({
+        actions: [
+          {
+            id: "bad-effect-shape",
+            labelKey: "test.bad.label",
+            descriptionKey: "test.bad.description",
+            effects: [effect],
+          },
+        ],
+      }))).toThrow("/actions/0/effects/0");
+    }
+  });
+
   it("rejects a mod with an invalid turning point choice career category", () => {
     const baseTurningPoint = baseRawGameData.turningPoints[0];
 
