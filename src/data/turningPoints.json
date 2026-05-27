@@ -290,5 +290,708 @@
     ],
     "labelKey": "turning.first-work-crossroad.label",
     "descriptionKey": "turning.first-work-crossroad.description"
+  },
+  {
+    "id": "scholarship-or-apprenticeship",
+    "category": "education",
+    "weight": 6,
+    "ageWindow": {
+      "minMonths": 156,
+      "maxMonths": 216,
+      "guaranteedByMonths": 186
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "player.lifeTags", "op": "has", "value": "education.secondary.track" },
+          { "target": "player.lifeTags", "op": "has", "value": "education.night-school.path" },
+          { "target": "careerCategory", "op": "eq", "value": "labor" }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "seek-scholarship",
+        "requirements": [
+          {
+            "condition": { "target": "stats.mind", "op": "gte", "value": 15 },
+            "reasonKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.requirement.0.reason"
+          },
+          {
+            "condition": { "target": "relationship.mentor.bond", "op": "gte", "value": 12 },
+            "reasonKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.requirement.1.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": -2 },
+          { "target": "stats.mind", "value": 2 },
+          { "target": "relationship.mentor", "value": 3 },
+          { "target": "affiliation", "value": "academy" }
+        ],
+        "grantsTags": ["education.scholarship-candidate"],
+        "educationLevel": "higher",
+        "npcOutcomes": [
+          {
+            "role": "mentor",
+            "grantsTags": ["mentor.scholarship-sponsor"],
+            "bond": 2,
+            "logKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.npc.0.log"
+          }
+        ],
+        "labelKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.label",
+        "descriptionKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.description",
+        "outcomeSummaryKey": "turning.scholarship-or-apprenticeship.choice.seek-scholarship.outcomeSummary"
+      },
+      {
+        "id": "enter-workshop",
+        "requirements": [
+          {
+            "condition": { "target": "stats.craft", "op": "gte", "value": 12 },
+            "reasonKey": "turning.scholarship-or-apprenticeship.choice.enter-workshop.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 5 },
+          { "target": "stats.craft", "value": 2 },
+          { "target": "relationship.neighbor", "value": 2 },
+          { "target": "affiliation", "value": "workshop" }
+        ],
+        "grantsTags": ["career.workshop-apprentice"],
+        "careerCategory": "labor",
+        "npcOutcomes": [
+          {
+            "role": "neighbor",
+            "careerCategory": "labor",
+            "grantsTags": ["neighbor.workshop-contact"],
+            "bond": 2,
+            "logKey": "turning.scholarship-or-apprenticeship.choice.enter-workshop.npc.0.log"
+          }
+        ],
+        "labelKey": "turning.scholarship-or-apprenticeship.choice.enter-workshop.label",
+        "descriptionKey": "turning.scholarship-or-apprenticeship.choice.enter-workshop.description",
+        "outcomeSummaryKey": "turning.scholarship-or-apprenticeship.choice.enter-workshop.outcomeSummary"
+      },
+      {
+        "id": "keep-night-balance",
+        "requirements": [
+          {
+            "condition": { "target": "stats.spirit", "op": "gte", "value": 12 },
+            "reasonKey": "turning.scholarship-or-apprenticeship.choice.keep-night-balance.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 1 },
+          { "target": "stats.mind", "value": 1 },
+          { "target": "stats.spirit", "value": 2 }
+        ],
+        "grantsTags": ["education.night-school-persistent"],
+        "educationLevel": "nightSchool",
+        "labelKey": "turning.scholarship-or-apprenticeship.choice.keep-night-balance.label",
+        "descriptionKey": "turning.scholarship-or-apprenticeship.choice.keep-night-balance.description",
+        "outcomeSummaryKey": "turning.scholarship-or-apprenticeship.choice.keep-night-balance.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.scholarship-or-apprenticeship.label",
+    "descriptionKey": "turning.scholarship-or-apprenticeship.description"
+  },
+  {
+    "id": "patronage-invitation",
+    "category": "organization",
+    "weight": 5,
+    "ageWindow": {
+      "minMonths": 192,
+      "maxMonths": 300,
+      "guaranteedByMonths": 240
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "educationLevel", "op": "eq", "value": "secondary" },
+          { "target": "educationLevel", "op": "eq", "value": "higher" },
+          { "target": "stats.mind", "op": "gte", "value": 15 }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "academy-recommendation",
+        "requirements": [
+          {
+            "condition": { "target": "relationship.mentor.bond", "op": "gte", "value": 12 },
+            "reasonKey": "turning.patronage-invitation.choice.academy-recommendation.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "academy" },
+          { "target": "stats.mind", "value": 2 },
+          { "target": "relationship.mentor", "value": 3 },
+          { "target": "money", "value": -2 }
+        ],
+        "grantsTags": ["affiliation.academy-protege"],
+        "careerCategory": "academic",
+        "labelKey": "turning.patronage-invitation.choice.academy-recommendation.label",
+        "descriptionKey": "turning.patronage-invitation.choice.academy-recommendation.description",
+        "outcomeSummaryKey": "turning.patronage-invitation.choice.academy-recommendation.outcomeSummary"
+      },
+      {
+        "id": "corporate-ledger",
+        "requirements": [
+          {
+            "condition": { "target": "stats.mind", "op": "gte", "value": 13 },
+            "reasonKey": "turning.patronage-invitation.choice.corporate-ledger.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "corporation" },
+          { "target": "money", "value": 6 },
+          { "target": "stats.social", "value": 1 },
+          { "target": "world.pressure", "value": 1 }
+        ],
+        "grantsTags": ["affiliation.corporate-ledger"],
+        "careerCategory": "clerical",
+        "labelKey": "turning.patronage-invitation.choice.corporate-ledger.label",
+        "descriptionKey": "turning.patronage-invitation.choice.corporate-ledger.description",
+        "outcomeSummaryKey": "turning.patronage-invitation.choice.corporate-ledger.outcomeSummary"
+      },
+      {
+        "id": "refuse-patronage",
+        "requirements": [],
+        "effects": [
+          { "target": "stats.spirit", "value": 2 },
+          { "target": "relationship.all", "value": -1 }
+        ],
+        "grantsTags": ["affiliation.refused-patronage"],
+        "labelKey": "turning.patronage-invitation.choice.refuse-patronage.label",
+        "descriptionKey": "turning.patronage-invitation.choice.refuse-patronage.description",
+        "outcomeSummaryKey": "turning.patronage-invitation.choice.refuse-patronage.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.patronage-invitation.label",
+    "descriptionKey": "turning.patronage-invitation.description"
+  },
+  {
+    "id": "workers-circle-invitation",
+    "category": "organization",
+    "weight": 5,
+    "ageWindow": {
+      "minMonths": 204,
+      "maxMonths": 360,
+      "guaranteedByMonths": 270
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "careerCategory", "op": "eq", "value": "labor" },
+          { "target": "player.lifeTags", "op": "has", "value": "career.factory-apprentice" },
+          { "target": "stats.social", "op": "gte", "value": 13 }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "join-mutual-aid",
+        "requirements": [
+          {
+            "condition": { "target": "stats.social", "op": "gte", "value": 11 },
+            "reasonKey": "turning.workers-circle-invitation.choice.join-mutual-aid.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "union" },
+          { "target": "stats.social", "value": 2 },
+          { "target": "relationship.all", "value": 2 },
+          { "target": "world.pressure", "value": 2 }
+        ],
+        "grantsTags": ["affiliation.mutual-aid"],
+        "labelKey": "turning.workers-circle-invitation.choice.join-mutual-aid.label",
+        "descriptionKey": "turning.workers-circle-invitation.choice.join-mutual-aid.description",
+        "outcomeSummaryKey": "turning.workers-circle-invitation.choice.join-mutual-aid.outcomeSummary"
+      },
+      {
+        "id": "stay-apart",
+        "requirements": [],
+        "effects": [
+          { "target": "stats.spirit", "value": 1 },
+          { "target": "money", "value": 2 }
+        ],
+        "grantsTags": ["affiliation.stayed-apart"],
+        "labelKey": "turning.workers-circle-invitation.choice.stay-apart.label",
+        "descriptionKey": "turning.workers-circle-invitation.choice.stay-apart.description",
+        "outcomeSummaryKey": "turning.workers-circle-invitation.choice.stay-apart.outcomeSummary"
+      },
+      {
+        "id": "carry-names-to-office",
+        "requirements": [
+          {
+            "condition": { "target": "affiliation", "op": "eq", "value": "corporation" },
+            "reasonKey": "turning.workers-circle-invitation.choice.carry-names-to-office.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 5 },
+          { "target": "relationship.all", "value": -3 },
+          { "target": "world.pressure", "value": 2 }
+        ],
+        "grantsTags": ["affiliation.informant-shadow"],
+        "labelKey": "turning.workers-circle-invitation.choice.carry-names-to-office.label",
+        "descriptionKey": "turning.workers-circle-invitation.choice.carry-names-to-office.description",
+        "outcomeSummaryKey": "turning.workers-circle-invitation.choice.carry-names-to-office.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.workers-circle-invitation.label",
+    "descriptionKey": "turning.workers-circle-invitation.description"
+  },
+  {
+    "id": "private-vow",
+    "category": "relationship",
+    "weight": 4,
+    "ageWindow": {
+      "minMonths": 216,
+      "maxMonths": 420,
+      "guaranteedByMonths": 300
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "stats.social", "op": "gte", "value": 12 },
+          { "target": "relationship.sibling.bond", "op": "gte", "value": 12 },
+          { "target": "relationship.neighbor.bond", "op": "gte", "value": 9 }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "bind-family",
+        "requirements": [],
+        "effects": [
+          { "target": "money", "value": -2 },
+          { "target": "relationship.sibling", "value": 5 },
+          { "target": "stats.spirit", "value": 1 }
+        ],
+        "grantsTags": ["relation.family-bound"],
+        "labelKey": "turning.private-vow.choice.bind-family.label",
+        "descriptionKey": "turning.private-vow.choice.bind-family.description",
+        "outcomeSummaryKey": "turning.private-vow.choice.bind-family.outcomeSummary"
+      },
+      {
+        "id": "leave-for-city",
+        "requirements": [
+          {
+            "condition": { "target": "money", "op": "gte", "value": 10 },
+            "reasonKey": "turning.private-vow.choice.leave-for-city.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": -6 },
+          { "target": "stats.social", "value": 2 },
+          { "target": "relationship.neighbor", "value": 2 },
+          { "target": "relationship.sibling", "value": -2 }
+        ],
+        "grantsTags": ["relation.city-bound"],
+        "labelKey": "turning.private-vow.choice.leave-for-city.label",
+        "descriptionKey": "turning.private-vow.choice.leave-for-city.description",
+        "outcomeSummaryKey": "turning.private-vow.choice.leave-for-city.outcomeSummary"
+      },
+      {
+        "id": "choose-solitary",
+        "requirements": [],
+        "effects": [
+          { "target": "stats.spirit", "value": 2 },
+          { "target": "relationship.all", "value": -2 },
+          { "target": "player.traits.add", "value": "stubborn" }
+        ],
+        "grantsTags": ["relation.solitary"],
+        "labelKey": "turning.private-vow.choice.choose-solitary.label",
+        "descriptionKey": "turning.private-vow.choice.choose-solitary.description",
+        "outcomeSummaryKey": "turning.private-vow.choice.choose-solitary.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.private-vow.label",
+    "descriptionKey": "turning.private-vow.description"
+  },
+  {
+    "id": "higher-study-specialization",
+    "category": "education",
+    "weight": 5,
+    "ageWindow": {
+      "minMonths": 228,
+      "maxMonths": 420,
+      "guaranteedByMonths": 300
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "educationLevel", "op": "eq", "value": "higher" },
+          { "target": "affiliation", "op": "eq", "value": "academy" }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "research-track",
+        "requirements": [
+          {
+            "condition": { "target": "stats.mind", "op": "gte", "value": 18 },
+            "reasonKey": "turning.higher-study-specialization.choice.research-track.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "stats.mind", "value": 3 },
+          { "target": "stats.social", "value": -1 },
+          { "target": "relationship.mentor", "value": 2 }
+        ],
+        "grantsTags": ["education.research-track"],
+        "careerCategory": "academic",
+        "labelKey": "turning.higher-study-specialization.choice.research-track.label",
+        "descriptionKey": "turning.higher-study-specialization.choice.research-track.description",
+        "outcomeSummaryKey": "turning.higher-study-specialization.choice.research-track.outcomeSummary"
+      },
+      {
+        "id": "state-exam",
+        "requirements": [
+          {
+            "condition": { "target": "stats.mind", "op": "gte", "value": 16 },
+            "reasonKey": "turning.higher-study-specialization.choice.state-exam.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "state" },
+          { "target": "stats.mind", "value": 1 },
+          { "target": "stats.social", "value": 2 },
+          { "target": "world.pressure", "value": 1 }
+        ],
+        "grantsTags": ["career.state-exam-track"],
+        "careerCategory": "state",
+        "labelKey": "turning.higher-study-specialization.choice.state-exam.label",
+        "descriptionKey": "turning.higher-study-specialization.choice.state-exam.description",
+        "outcomeSummaryKey": "turning.higher-study-specialization.choice.state-exam.outcomeSummary"
+      },
+      {
+        "id": "leave-academy",
+        "requirements": [],
+        "effects": [
+          { "target": "money", "value": 5 },
+          { "target": "stats.spirit", "value": 1 },
+          { "target": "relationship.mentor", "value": -2 }
+        ],
+        "grantsTags": ["education.left-academy"],
+        "labelKey": "turning.higher-study-specialization.choice.leave-academy.label",
+        "descriptionKey": "turning.higher-study-specialization.choice.leave-academy.description",
+        "outcomeSummaryKey": "turning.higher-study-specialization.choice.leave-academy.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.higher-study-specialization.label",
+    "descriptionKey": "turning.higher-study-specialization.description"
+  },
+  {
+    "id": "trade-standing",
+    "category": "career",
+    "weight": 5,
+    "ageWindow": {
+      "minMonths": 252,
+      "maxMonths": 480,
+      "guaranteedByMonths": 336
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "careerCategory", "op": "eq", "value": "labor" },
+          { "target": "careerCategory", "op": "eq", "value": "clerical" },
+          { "target": "player.lifeTags", "op": "has", "value": "career.workshop-apprentice" }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "foreman-path",
+        "requirements": [
+          {
+            "condition": { "target": "stats.craft", "op": "gte", "value": 16 },
+            "reasonKey": "turning.trade-standing.choice.foreman-path.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 8 },
+          { "target": "stats.social", "value": 1 },
+          { "target": "relationship.neighbor", "value": -1 },
+          { "target": "world.pressure", "value": 1 }
+        ],
+        "grantsTags": ["career.foreman-path"],
+        "careerCategory": "labor",
+        "labelKey": "turning.trade-standing.choice.foreman-path.label",
+        "descriptionKey": "turning.trade-standing.choice.foreman-path.description",
+        "outcomeSummaryKey": "turning.trade-standing.choice.foreman-path.outcomeSummary"
+      },
+      {
+        "id": "secure-clerk",
+        "requirements": [
+          {
+            "condition": { "target": "careerCategory", "op": "eq", "value": "clerical" },
+            "reasonKey": "turning.trade-standing.choice.secure-clerk.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 7 },
+          { "target": "stats.mind", "value": 1 },
+          { "target": "stats.social", "value": 1 }
+        ],
+        "grantsTags": ["career.secure-clerk"],
+        "careerCategory": "clerical",
+        "labelKey": "turning.trade-standing.choice.secure-clerk.label",
+        "descriptionKey": "turning.trade-standing.choice.secure-clerk.description",
+        "outcomeSummaryKey": "turning.trade-standing.choice.secure-clerk.outcomeSummary"
+      },
+      {
+        "id": "independent-craft",
+        "requirements": [
+          {
+            "condition": { "target": "money", "op": "gte", "value": 12 },
+            "reasonKey": "turning.trade-standing.choice.independent-craft.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": -8 },
+          { "target": "stats.craft", "value": 2 },
+          { "target": "stats.spirit", "value": 2 }
+        ],
+        "grantsTags": ["career.independent-craft"],
+        "careerCategory": "mercantile",
+        "labelKey": "turning.trade-standing.choice.independent-craft.label",
+        "descriptionKey": "turning.trade-standing.choice.independent-craft.description",
+        "outcomeSummaryKey": "turning.trade-standing.choice.independent-craft.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.trade-standing.label",
+    "descriptionKey": "turning.trade-standing.description"
+  },
+  {
+    "id": "faith-or-civic-duty",
+    "category": "organization",
+    "weight": 4,
+    "ageWindow": {
+      "minMonths": 264,
+      "maxMonths": 540,
+      "guaranteedByMonths": 360
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "stats.spirit", "op": "gte", "value": 14 },
+          { "target": "careerCategory", "op": "eq", "value": "state" },
+          { "target": "affiliation", "op": "eq", "value": "academy" }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "church-service",
+        "requirements": [
+          {
+            "condition": { "target": "stats.spirit", "op": "gte", "value": 14 },
+            "reasonKey": "turning.faith-or-civic-duty.choice.church-service.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "church" },
+          { "target": "stats.spirit", "value": 3 },
+          { "target": "relationship.all", "value": 1 }
+        ],
+        "grantsTags": ["affiliation.church-service"],
+        "careerCategory": "religious",
+        "labelKey": "turning.faith-or-civic-duty.choice.church-service.label",
+        "descriptionKey": "turning.faith-or-civic-duty.choice.church-service.description",
+        "outcomeSummaryKey": "turning.faith-or-civic-duty.choice.church-service.outcomeSummary"
+      },
+      {
+        "id": "registry-service",
+        "requirements": [
+          {
+            "condition": { "target": "stats.mind", "op": "gte", "value": 15 },
+            "reasonKey": "turning.faith-or-civic-duty.choice.registry-service.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "state" },
+          { "target": "stats.mind", "value": 1 },
+          { "target": "stats.social", "value": 2 },
+          { "target": "world.pressure", "value": 1 }
+        ],
+        "grantsTags": ["affiliation.registry-service"],
+        "careerCategory": "state",
+        "labelKey": "turning.faith-or-civic-duty.choice.registry-service.label",
+        "descriptionKey": "turning.faith-or-civic-duty.choice.registry-service.description",
+        "outcomeSummaryKey": "turning.faith-or-civic-duty.choice.registry-service.outcomeSummary"
+      },
+      {
+        "id": "keep-private-conscience",
+        "requirements": [],
+        "effects": [
+          { "target": "stats.spirit", "value": 2 },
+          { "target": "relationship.all", "value": -1 }
+        ],
+        "grantsTags": ["affiliation.private-conscience"],
+        "labelKey": "turning.faith-or-civic-duty.choice.keep-private-conscience.label",
+        "descriptionKey": "turning.faith-or-civic-duty.choice.keep-private-conscience.description",
+        "outcomeSummaryKey": "turning.faith-or-civic-duty.choice.keep-private-conscience.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.faith-or-civic-duty.label",
+    "descriptionKey": "turning.faith-or-civic-duty.description"
+  },
+  {
+    "id": "household-formation",
+    "category": "relationship",
+    "weight": 4,
+    "ageWindow": {
+      "minMonths": 288,
+      "maxMonths": 600,
+      "guaranteedByMonths": 396
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "money", "op": "gte", "value": 12 },
+          { "target": "relationship.sibling.bond", "op": "gte", "value": 14 },
+          { "target": "relationship.neighbor.bond", "op": "gte", "value": 12 }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "shared-household",
+        "requirements": [
+          {
+            "condition": { "target": "money", "op": "gte", "value": 12 },
+            "reasonKey": "turning.household-formation.choice.shared-household.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": -6 },
+          { "target": "relationship.all", "value": 2 },
+          { "target": "stats.spirit", "value": 1 }
+        ],
+        "grantsTags": ["household.shared"],
+        "labelKey": "turning.household-formation.choice.shared-household.label",
+        "descriptionKey": "turning.household-formation.choice.shared-household.description",
+        "outcomeSummaryKey": "turning.household-formation.choice.shared-household.outcomeSummary"
+      },
+      {
+        "id": "support-sibling-house",
+        "requirements": [
+          {
+            "condition": { "target": "relationship.sibling.bond", "op": "gte", "value": 12 },
+            "reasonKey": "turning.household-formation.choice.support-sibling-house.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": -3 },
+          { "target": "relationship.sibling", "value": 5 },
+          { "target": "stats.social", "value": 1 }
+        ],
+        "grantsTags": ["household.sibling-anchor"],
+        "labelKey": "turning.household-formation.choice.support-sibling-house.label",
+        "descriptionKey": "turning.household-formation.choice.support-sibling-house.description",
+        "outcomeSummaryKey": "turning.household-formation.choice.support-sibling-house.outcomeSummary"
+      },
+      {
+        "id": "rent-alone",
+        "requirements": [],
+        "effects": [
+          { "target": "money", "value": -2 },
+          { "target": "stats.spirit", "value": 2 },
+          { "target": "relationship.all", "value": -1 }
+        ],
+        "grantsTags": ["household.rent-alone"],
+        "labelKey": "turning.household-formation.choice.rent-alone.label",
+        "descriptionKey": "turning.household-formation.choice.rent-alone.description",
+        "outcomeSummaryKey": "turning.household-formation.choice.rent-alone.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.household-formation.label",
+    "descriptionKey": "turning.household-formation.description"
+  },
+  {
+    "id": "public-reputation",
+    "category": "world",
+    "weight": 4,
+    "ageWindow": {
+      "minMonths": 336,
+      "maxMonths": 660,
+      "guaranteedByMonths": 468
+    },
+    "conditions": [
+      {
+        "any": [
+          { "target": "affiliation", "op": "neq", "value": "none" },
+          { "target": "stats.social", "op": "gte", "value": 16 },
+          { "target": "world.pressure", "op": "gte", "value": 20 }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "respectable-name",
+        "requirements": [
+          {
+            "condition": { "target": "stats.social", "op": "gte", "value": 14 },
+            "reasonKey": "turning.public-reputation.choice.respectable-name.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "money", "value": 4 },
+          { "target": "stats.social", "value": 2 },
+          { "target": "world.pressure", "value": -1 }
+        ],
+        "grantsTags": ["reputation.respectable"],
+        "labelKey": "turning.public-reputation.choice.respectable-name.label",
+        "descriptionKey": "turning.public-reputation.choice.respectable-name.description",
+        "outcomeSummaryKey": "turning.public-reputation.choice.respectable-name.outcomeSummary"
+      },
+      {
+        "id": "quiet-dissenter",
+        "requirements": [
+          {
+            "condition": { "target": "stats.spirit", "op": "gte", "value": 14 },
+            "reasonKey": "turning.public-reputation.choice.quiet-dissenter.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "stats.spirit", "value": 2 },
+          { "target": "relationship.all", "value": 1 },
+          { "target": "world.pressure", "value": 2 }
+        ],
+        "grantsTags": ["reputation.quiet-dissenter"],
+        "labelKey": "turning.public-reputation.choice.quiet-dissenter.label",
+        "descriptionKey": "turning.public-reputation.choice.quiet-dissenter.description",
+        "outcomeSummaryKey": "turning.public-reputation.choice.quiet-dissenter.outcomeSummary"
+      },
+      {
+        "id": "underground-contact",
+        "requirements": [
+          {
+            "condition": {
+              "any": [
+                { "target": "careerCategory", "op": "eq", "value": "underground" },
+                { "target": "player.lifeTags", "op": "has", "value": "affiliation.mutual-aid" }
+              ]
+            },
+            "reasonKey": "turning.public-reputation.choice.underground-contact.requirement.0.reason"
+          }
+        ],
+        "effects": [
+          { "target": "affiliation", "value": "underground" },
+          { "target": "money", "value": 3 },
+          { "target": "stats.social", "value": 2 },
+          { "target": "world.pressure", "value": 4 }
+        ],
+        "grantsTags": ["reputation.underground-contact"],
+        "careerCategory": "underground",
+        "labelKey": "turning.public-reputation.choice.underground-contact.label",
+        "descriptionKey": "turning.public-reputation.choice.underground-contact.description",
+        "outcomeSummaryKey": "turning.public-reputation.choice.underground-contact.outcomeSummary"
+      }
+    ],
+    "labelKey": "turning.public-reputation.label",
+    "descriptionKey": "turning.public-reputation.description"
   }
 ]

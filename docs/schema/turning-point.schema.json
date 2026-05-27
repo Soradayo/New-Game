@@ -13,7 +13,7 @@
     "labelKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
     "descriptionKey": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/locKey" },
     "category": {
-      "enum": ["education", "career", "relationship", "world"]
+      "enum": ["education", "career", "relationship", "organization", "world"]
     },
     "weight": {
       "type": "number",

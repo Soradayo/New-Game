@@ -8,7 +8,7 @@
   "properties": {
     "id": { "$ref": "https://new-game.local/schema/game-data.schema.json#/$defs/id" },
     "category": {
-      "enum": ["daily", "relationship", "turningPoint", "world"]
+      "enum": ["daily", "relationship", "turningPoint", "world", "career"]
     },
     "weight": {
       "type": "number",

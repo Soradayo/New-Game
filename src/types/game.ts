@@ -139,6 +139,7 @@ export type EffectTarget =
   | "world.region"
   | "world.tags.add"
   | "world.tags.remove"
+  | "affiliation"
   | `stats.${AbilityKey}`
   | `relationship.${"all" | string}`
   | "relationship.all.lifeTags.add"
@@ -233,7 +234,7 @@ export interface RawStance {
 
 export interface EventDefinition {
   id: string;
-  category: "daily" | "relationship" | "turningPoint" | "world";
+  category: "daily" | "relationship" | "turningPoint" | "world" | "career";
   weight: number;
   isMajor?: boolean;
   cooldownTurns?: number;
@@ -318,7 +319,7 @@ export interface TurningPointDefinition {
   id: string;
   label: string;
   description: string;
-  category: "education" | "career" | "relationship" | "world";
+  category: "education" | "career" | "relationship" | "organization" | "world";
   weight: number;
   ageWindow: AgeWindow;
   conditions: Condition[];

@@ -170,5 +170,425 @@
     "conditions": [],
     "effects": [],
     "templateKey": "event.quiet-month.template"
+  },
+  {
+    "id": "scholarship-exam",
+    "category": "turningPoint",
+    "weight": 4,
+    "isMajor": true,
+    "cooldownTurns": 10,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "education.scholarship-candidate" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "relationship.mentor", "value": 1 }
+    ],
+    "templateKey": "event.scholarship-exam.template"
+  },
+  {
+    "id": "workshop-burn",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.workshop-apprentice" }
+    ],
+    "effects": [
+      { "target": "stats.craft", "value": 1 },
+      { "target": "stats.body", "value": -1 }
+    ],
+    "templateKey": "event.workshop-burn.template"
+  },
+  {
+    "id": "ledger-trial",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "corporation" }
+    ],
+    "effects": [
+      { "target": "money", "value": 3 },
+      { "target": "stats.mind", "value": 1 }
+    ],
+    "templateKey": "event.ledger-trial.template"
+  },
+  {
+    "id": "academy-corridor",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "academy" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "relationship.mentor", "value": 1 }
+    ],
+    "templateKey": "event.academy-corridor.template"
+  },
+  {
+    "id": "mutual-aid-ledger",
+    "category": "relationship",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "union" }
+    ],
+    "effects": [
+      { "target": "stats.social", "value": 1 },
+      { "target": "relationship.all", "value": 1 }
+    ],
+    "templateKey": "event.mutual-aid-ledger.template"
+  },
+  {
+    "id": "foreman-question",
+    "category": "world",
+    "weight": 4,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "union" }
+    ],
+    "effects": [
+      { "target": "world.pressure", "value": 2 },
+      { "target": "relationship.neighbor", "value": -1 }
+    ],
+    "templateKey": "event.foreman-question.template"
+  },
+  {
+    "id": "family-remittance",
+    "category": "relationship",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "relation.family-bound" }
+    ],
+    "effects": [
+      { "target": "money", "value": -2 },
+      { "target": "relationship.sibling", "value": 3 }
+    ],
+    "templateKey": "event.family-remittance.template"
+  },
+  {
+    "id": "city-lodging",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "relation.city-bound" }
+    ],
+    "effects": [
+      { "target": "money", "value": -3 },
+      { "target": "stats.social", "value": 1 }
+    ],
+    "templateKey": "event.city-lodging.template"
+  },
+  {
+    "id": "solitary-habit",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "relation.solitary" }
+    ],
+    "effects": [
+      { "target": "stats.spirit", "value": 1 },
+      { "target": "relationship.all", "value": -1 }
+    ],
+    "templateKey": "event.solitary-habit.template"
+  },
+  {
+    "id": "night-certificate",
+    "category": "daily",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "education.night-school-persistent" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "stats.spirit", "value": 1 }
+    ],
+    "templateKey": "event.night-certificate.template"
+  },
+  {
+    "id": "research-notebook",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "education.research-track" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "stats.social", "value": -1 }
+    ],
+    "templateKey": "event.research-notebook.template"
+  },
+  {
+    "id": "state-exam-copybook",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.state-exam-track" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "money", "value": -1 }
+    ],
+    "templateKey": "event.state-exam-copybook.template"
+  },
+  {
+    "id": "academy-debate",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "academy" }
+    ],
+    "effects": [
+      { "target": "stats.social", "value": 1 },
+      { "target": "relationship.mentor", "value": 1 }
+    ],
+    "templateKey": "event.academy-debate.template"
+  },
+  {
+    "id": "foreman-ledger",
+    "category": "career",
+    "weight": 5,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.foreman-path" }
+    ],
+    "effects": [
+      { "target": "money", "value": 4 },
+      { "target": "relationship.neighbor", "value": -1 }
+    ],
+    "templateKey": "event.foreman-ledger.template"
+  },
+  {
+    "id": "clerk-window",
+    "category": "career",
+    "weight": 5,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.secure-clerk" }
+    ],
+    "effects": [
+      { "target": "money", "value": 2 },
+      { "target": "stats.mind", "value": 1 }
+    ],
+    "templateKey": "event.clerk-window.template"
+  },
+  {
+    "id": "independent-order",
+    "category": "career",
+    "weight": 5,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.independent-craft" }
+    ],
+    "effects": [
+      { "target": "money", "value": 3 },
+      { "target": "stats.craft", "value": 1 }
+    ],
+    "templateKey": "event.independent-order.template"
+  },
+  {
+    "id": "church-vigil",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "church" }
+    ],
+    "effects": [
+      { "target": "stats.spirit", "value": 1 },
+      { "target": "relationship.all", "value": 1 }
+    ],
+    "templateKey": "event.church-vigil.template"
+  },
+  {
+    "id": "registry-seal",
+    "category": "world",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "state" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "world.pressure", "value": 1 }
+    ],
+    "templateKey": "event.registry-seal.template"
+  },
+  {
+    "id": "private-prayer",
+    "category": "daily",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "affiliation.private-conscience" }
+    ],
+    "effects": [
+      { "target": "stats.spirit", "value": 1 }
+    ],
+    "templateKey": "event.private-prayer.template"
+  },
+  {
+    "id": "shared-rent",
+    "category": "relationship",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "household.shared" }
+    ],
+    "effects": [
+      { "target": "money", "value": -2 },
+      { "target": "relationship.all", "value": 2 }
+    ],
+    "templateKey": "event.shared-rent.template"
+  },
+  {
+    "id": "sibling-table",
+    "category": "relationship",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "household.sibling-anchor" }
+    ],
+    "effects": [
+      { "target": "relationship.sibling", "value": 2 },
+      { "target": "stats.spirit", "value": 1 }
+    ],
+    "templateKey": "event.sibling-table.template"
+  },
+  {
+    "id": "room-key",
+    "category": "daily",
+    "weight": 5,
+    "cooldownTurns": 5,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "household.rent-alone" }
+    ],
+    "effects": [
+      { "target": "stats.spirit", "value": 1 },
+      { "target": "relationship.all", "value": -1 }
+    ],
+    "templateKey": "event.room-key.template"
+  },
+  {
+    "id": "respectable-visit",
+    "category": "relationship",
+    "weight": 5,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "reputation.respectable" }
+    ],
+    "effects": [
+      { "target": "money", "value": 2 },
+      { "target": "stats.social", "value": 1 }
+    ],
+    "templateKey": "event.respectable-visit.template"
+  },
+  {
+    "id": "dissenter-note",
+    "category": "world",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "reputation.quiet-dissenter" }
+    ],
+    "effects": [
+      { "target": "world.pressure", "value": 2 },
+      { "target": "relationship.all", "value": 1 }
+    ],
+    "templateKey": "event.dissenter-note.template"
+  },
+  {
+    "id": "underground-package",
+    "category": "world",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "reputation.underground-contact" }
+    ],
+    "effects": [
+      { "target": "money", "value": 4 },
+      { "target": "world.pressure", "value": 3 }
+    ],
+    "templateKey": "event.underground-package.template"
+  },
+  {
+    "id": "mentor-disappointment",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "education.left-academy" }
+    ],
+    "effects": [
+      { "target": "relationship.mentor", "value": -3 },
+      { "target": "stats.spirit", "value": 1 }
+    ],
+    "templateKey": "event.mentor-disappointment.template"
+  },
+  {
+    "id": "apprentice-complaint",
+    "category": "career",
+    "weight": 4,
+    "cooldownTurns": 7,
+    "conditions": [
+      { "target": "player.lifeTags", "op": "has", "value": "career.foreman-path" }
+    ],
+    "effects": [
+      { "target": "relationship.neighbor", "value": -2 },
+      { "target": "world.pressure", "value": 1 }
+    ],
+    "templateKey": "event.apprentice-complaint.template"
+  },
+  {
+    "id": "bureau-queue",
+    "category": "daily",
+    "weight": 4,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "state" }
+    ],
+    "effects": [
+      { "target": "stats.social", "value": 1 },
+      { "target": "stats.spirit", "value": -1 }
+    ],
+    "templateKey": "event.bureau-queue.template"
+  },
+  {
+    "id": "chapel-rumor",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "affiliation", "op": "eq", "value": "church" }
+    ],
+    "effects": [
+      { "target": "relationship.all", "value": 1 },
+      { "target": "stats.social", "value": 1 }
+    ],
+    "templateKey": "event.chapel-rumor.template"
+  },
+  {
+    "id": "market-stall",
+    "category": "career",
+    "weight": 4,
+    "cooldownTurns": 6,
+    "conditions": [
+      { "target": "careerCategory", "op": "eq", "value": "mercantile" }
+    ],
+    "effects": [
+      { "target": "money", "value": 2 },
+      { "target": "stats.craft", "value": 1 }
+    ],
+    "templateKey": "event.market-stall.template"
   }
 ]

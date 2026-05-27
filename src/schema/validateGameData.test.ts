@@ -8,6 +8,22 @@ describe("game data schema validation", () => {
     expect(() => validateGameData(baseRawGameData, "base")).not.toThrow();
   });
 
+  it("accepts organization turning points in base data", () => {
+    expect(baseRawGameData.turningPoints.some((turningPoint) =>
+      turningPoint.category === "organization",
+    )).toBe(true);
+    expect(() => validateGameData(baseRawGameData, "base")).not.toThrow();
+  });
+
+  it("includes the M3 content volume in base data", () => {
+    expect(baseRawGameData.turningPoints.length).toBeGreaterThanOrEqual(10);
+    expect(baseRawGameData.events.length).toBeGreaterThanOrEqual(40);
+    expect(baseRawGameData.turningPoints.some((turningPoint) =>
+      turningPoint.id === "public-reputation",
+    )).toBe(true);
+    expect(baseRawGameData.events.some((event) => event.id === "underground-package")).toBe(true);
+  });
+
   it("rejects a mod with an invalid event category", () => {
     expect(() => parseMod(JSON.stringify({
       events: [

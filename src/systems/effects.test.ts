@@ -35,6 +35,7 @@ describe("effects", () => {
       { target: "relationship.all.traits.add", value: "witness" },
       { target: "world.tags.add", value: "strike-rumor" },
       { target: "world.region", value: "capital" },
+      { target: "affiliation", value: "academy" },
     ]);
     const mentor = next.relationships.find((relationship) => relationship.id === "mentor");
 
@@ -49,6 +50,7 @@ describe("effects", () => {
     expect(next.relationships.every((relationship) => relationship.traits.includes("witness"))).toBe(true);
     expect(next.world.tags).toContain("strike-rumor");
     expect(next.world.region).toBe("capital");
+    expect(next.player.affiliation).toBe("academy");
 
     const removed = applyEffects(next, [
       { target: "player.traits.remove", value: "observant" },

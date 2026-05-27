@@ -1,47 +1,29 @@
-# M2後始末 実装計画: 因果モデルの境界強化
+# M3増補 実装計画: 転機と人生イベントの目標量到達
 
 ## Summary
-- Game Studioレビューで出た P1/P2 をまとめて修正する。
-- 状態に表示文言が混ざる問題を解消し、`affiliation` / tags / traits を内部IDとして扱う。
-- Mod schemaを厳格化し、壊れたcondition/effectが実行時に無音で混ざらないようにする。
-- save構造の意味が変わるため、save versionを `0.6-causality-hardening` に上げ、旧saveは破棄する。
+- M3第一縦切りを増補し、M3ロードマップの目標量に近づける。
+- turningPointsは11件前後、eventsは40件前後まで拡張する。
+- 重点は引き続き進路・所属・関係性の分岐で、世界の大変動はM5へ残す。
+- Playwright証跡スクショは `.tmp/playwright/` に保存し、完了報告で主要画像を提示する。
 
 ## Key Changes
-- `player.affiliation` / `relationship.affiliation` の初期値は表示文ではなく `"none"` にする。
-- UIでは `affiliation.<id>.label` または既存 `world.affiliation.none` を解決し、欠落時はIDを表示する。
-- `lifeTags` / `world.tags` は `tag.<id>.label` をlocalisationから解決し、欠落時はIDを表示する。
-- 右側の人間関係パネルでは `lifeTags` と `traits` を混在表示せず、短い別行表示に分ける。
-- 転機中のモバイルsticky操作バーは非表示、または転機overlayより下のz-indexにして、割り込み選択を優先する。
-- `readConditionValue()` が `undefined` を返す場合、`eq` / `neq` / 数値比較 / membership はすべてfalseにする。
-- `all` / `any` はschemaで `minItems: 1` を要求する。
-- `condition.schema.json` は numeric / string / list condition を `oneOf` で分離する。
-- `effect.schema.json` は target種別ごとに value型を分離する。
-- `world.region`, `educationLevel`, `careerCategory` は既存enum値のみ許可する。
-- `relationship.all.affiliation/careerCategory/educationLevel` はschemaで拒否する。
-- `SAVE_VERSION` を `0.6-causality-hardening` に更新する。
-- import時に tags/traits/lifeTags が string[] で、`affiliation` が空でないstringであることを検証する。
+- 新規転機を5件追加し、合計11件にする。
+- 追加転機は高等学習、職業の定着、宗教/公的生活、家の形成、評判の行方を扱う。
+- 新規イベントを20件追加し、合計40件にする。
+- 追加イベントは既存のM2/M3因果軸で条件分岐し、選択後の生活差分がログに出るようにする。
+- 追加タグ、所属、イベント、転機文言はlocalisation key経由に統一する。
+- save versionは変更しない。
 
 ## Test Plan
-- Unit tests:
-  - 初期 `affiliation` が `"none"` で、UI表示は日本語の「なし」になる。
-  - `affiliation eq "none"` が成立する。
-  - 存在しない `relationship.<id>.* neq ...` がfalseになる。
-  - 不正effectをschemaで拒否する。
-  - 不正conditionをschemaで拒否する。
-  - `relationship.all.affiliation` 系effectをschemaで拒否する。
-  - save importで string[] 以外の tags/traits を拒否する。
-  - `0.5-causality` 以前のsaveを拒否する。
-- UI tests:
-  - lifeTags / world.tags がlocalisation経由で表示され、未翻訳IDでも落ちない。
-  - 人間関係パネルで経歴タグと特性が区別される。
-  - モバイル幅で転機中にsticky操作バーが転機選択を覆わない。
-- Verification:
-  - `npm test`
-  - `npm run build`
-  - Playwright smoke: 初期表示、転機表示、タグ表示、言語切替、console error/warningなし。
+- `validateGameData(baseRawGameData, "base")` が通る。
+- turningPoints/eventsの件数がM3増補目標に達する。
+- 新規転機choice適用で所属、職業、教育、関係、タグが更新される。
+- 新規イベントがタグ/所属/職業条件に応じて出現し、条件不一致では除外される。
+- `npm test`
+- `npm run build`
+- Playwright smokeと証跡スクショ: 初期、転機、選択後、モバイル。
 
 ## Assumptions
-- P3の「因果情報を所持品タブから独立させる」再設計はM3前のUI整理に回す。
-- tagsは `tag.<id>.label` のlocalisation解決を標準とし、欠落時はID表示にする。
-- `affiliation` は当面自由な内部ID文字列を許すが、既知IDはlocalisationで表示名を持たせる。
-- Runtime側ではschemaを通過したデータを前提にしつつ、save importだけは破損データ防御を強める。
+- NPCへの主体的関与UIはM4へ回す。
+- 世界シミュレーション軸の本格追加はM5へ回す。
+- M3では追加コンテンツの質と条件分岐を優先し、UI再設計は行わない。

@@ -68,6 +68,13 @@ export function getChoiceAvailability(
   };
 }
 
+export function hasAvailableTurningPointChoice(
+  state: GameState,
+  turningPoint: TurningPointDefinition,
+): boolean {
+  return turningPoint.choices.some((choice) => getChoiceAvailability(state, choice).available);
+}
+
 export function applyTurningPointChoice(
   state: GameState,
   data: GameData,
@@ -134,7 +141,8 @@ function isTurningPointEligible(state: GameState, turningPoint: TurningPointDefi
   return !alreadyResolved &&
     ageMonths >= turningPoint.ageWindow.minMonths &&
     ageMonths <= turningPoint.ageWindow.maxMonths &&
-    turningPoint.conditions.every((condition) => matchesCondition(state, condition));
+    turningPoint.conditions.every((condition) => matchesCondition(state, condition)) &&
+    hasAvailableTurningPointChoice(state, turningPoint);
 }
 
 function chooseWeighted(

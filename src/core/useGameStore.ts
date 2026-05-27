@@ -4,7 +4,7 @@ import { getStoredLocale, persistLocale, t } from "../localisation";
 import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn, advanceUntilImportantEvent } from "../systems/turnEngine";
-import { applyTurningPointChoice } from "../systems/turningPoints";
+import { applyTurningPointChoice, hasAvailableTurningPointChoice } from "../systems/turningPoints";
 import { createHistoryEntry } from "../systems/history";
 import { parseMod } from "../mods/mergeMods";
 import type { GameData, GameState, LocaleCode, ModData } from "../types/game";
@@ -84,7 +84,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   devForceTurningPoint: () => {
     const state = get().state;
     const forced = get().data.turningPoints.find((turningPoint) =>
-      !state.player.lifeTags.some((tag) => tag.startsWith(`turning.${turningPoint.id}.`)),
+      !state.player.lifeTags.some((tag) => tag.startsWith(`turning.${turningPoint.id}.`)) &&
+      hasAvailableTurningPointChoice(state, turningPoint),
     );
     if (!forced) {
       set({ error: t(get().data.localisation, "system.error.noTurningPoint") });

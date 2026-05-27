@@ -35,6 +35,16 @@ function applyEffect(state: GameState, effect: Effect): GameState {
     };
   }
 
+  if (effect.target === "affiliation" && typeof effect.value === "string") {
+    return {
+      ...state,
+      player: {
+        ...state.player,
+        affiliation: effect.value,
+      },
+    };
+  }
+
   if ((effect.target === "world.tags.add" || effect.target === "world.tags.remove") && typeof effect.value === "string") {
     return {
       ...state,

@@ -116,4 +116,37 @@ describe("event resolver", () => {
 
     expect(resolveEvent(state, events, 0.1)?.id).toBe("available");
   });
+
+  it("uses life tags and affiliation to gate M3 events", () => {
+    const initial = createInitialState(baseGameData);
+    const state: GameState = {
+      ...initial,
+      player: {
+        ...initial.player,
+        affiliation: "academy",
+        lifeTags: ["education.scholarship-candidate"],
+      },
+    };
+    const m3Events = baseGameData.events.filter((event) =>
+      event.id === "scholarship-exam" || event.id === "workshop-burn",
+    );
+
+    expect(resolveEvent(state, m3Events, 0.1)?.id).toBe("scholarship-exam");
+  });
+
+  it("uses late M3 reputation tags to gate follow-up events", () => {
+    const initial = createInitialState(baseGameData);
+    const state: GameState = {
+      ...initial,
+      player: {
+        ...initial.player,
+        lifeTags: ["reputation.underground-contact"],
+      },
+    };
+    const m3Events = baseGameData.events.filter((event) =>
+      event.id === "underground-package" || event.id === "research-notebook",
+    );
+
+    expect(resolveEvent(state, m3Events, 0.1)?.id).toBe("underground-package");
+  });
 });
