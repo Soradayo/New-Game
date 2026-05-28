@@ -5,6 +5,7 @@ import { importSave, exportSave } from "../saves/saveCodec";
 import { createContent } from "../systems/content";
 import { advanceTurn, advanceUntilImportantEvent } from "../systems/turnEngine";
 import { applyTurningPointChoice, hasAvailableTurningPointChoice } from "../systems/turningPoints";
+import { performNpcInteraction as performNpcInteractionSystem } from "../systems/npcInteractions";
 import { createHistoryEntry } from "../systems/history";
 import { parseMod } from "../mods/mergeMods";
 import type { GameData, GameState, LocaleCode, ModData } from "../types/game";
@@ -23,6 +24,7 @@ interface GameStore {
   nextTurn: () => void;
   advanceToImportantEvent: () => void;
   chooseTurningPoint: (choiceId: string) => void;
+  performNpcInteraction: (relationshipId: string, interactionId: string) => void;
   devJumpToAge: (ageYears: number) => void;
   devForceTurningPoint: () => void;
   reset: () => void;
@@ -67,6 +69,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ state: next, error: null });
     } catch (error) {
       set({ error: error instanceof Error ? error.message : t(get().data.localisation, "system.error.turningChoiceFailed") });
+    }
+  },
+  performNpcInteraction: (relationshipId, interactionId) => {
+    try {
+      const next = performNpcInteractionSystem(get().state, get().data, relationshipId, interactionId);
+      persistState(next);
+      set({ state: next, error: null });
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : t(get().data.localisation, "system.error.npcInteractionFailed") });
     }
   },
   devJumpToAge: (ageYears) => {

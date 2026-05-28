@@ -32,6 +32,9 @@ describe("effects", () => {
       { target: "relationship.mentor.affiliation", value: "school" },
       { target: "relationship.mentor.careerCategory", value: "academic" },
       { target: "relationship.mentor.educationLevel", value: "higher" },
+      { target: "relationship.mentor.trust", value: 2 },
+      { target: "relationship.mentor.dependency", value: 1 },
+      { target: "relationship.mentor.conflict", value: 1 },
       { target: "relationship.all.traits.add", value: "witness" },
       { target: "world.tags.add", value: "strike-rumor" },
       { target: "world.region", value: "capital" },
@@ -47,6 +50,9 @@ describe("effects", () => {
     expect(mentor?.affiliation).toBe("school");
     expect(mentor?.careerCategory).toBe("academic");
     expect(mentor?.educationLevel).toBe("higher");
+    expect(mentor?.trust).toBe(state.relationships.find((relationship) => relationship.id === "mentor")!.trust + 2);
+    expect(mentor?.dependency).toBe(state.relationships.find((relationship) => relationship.id === "mentor")!.dependency + 1);
+    expect(mentor?.conflict).toBe(state.relationships.find((relationship) => relationship.id === "mentor")!.conflict + 1);
     expect(next.relationships.every((relationship) => relationship.traits.includes("witness"))).toBe(true);
     expect(next.world.tags).toContain("strike-rumor");
     expect(next.world.region).toBe("capital");

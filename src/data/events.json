@@ -590,5 +590,100 @@
       { "target": "stats.craft", "value": 1 }
     ],
     "templateKey": "event.market-stall.template"
+  },
+  {
+    "id": "npc-supported-return",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.sibling.lifeTags", "op": "has", "value": "npc.supported" }
+    ],
+    "effects": [
+      { "target": "money", "value": 1 },
+      { "target": "relationship.sibling.trust", "value": 1 }
+    ],
+    "templateKey": "event.npc-supported-return.template"
+  },
+  {
+    "id": "npc-consulted-note",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.mentor.lifeTags", "op": "has", "value": "npc.consulted" }
+    ],
+    "effects": [
+      { "target": "stats.mind", "value": 1 },
+      { "target": "relationship.mentor.trust", "value": 1 }
+    ],
+    "templateKey": "event.npc-consulted-note.template"
+  },
+  {
+    "id": "npc-distance-rumor",
+    "category": "relationship",
+    "weight": 3,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.neighbor.lifeTags", "op": "has", "value": "npc.distance-kept" }
+    ],
+    "effects": [
+      { "target": "relationship.neighbor.conflict", "value": 1 }
+    ],
+    "templateKey": "event.npc-distance-rumor.template"
+  },
+  {
+    "id": "npc-invitation-memory",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.sibling.lifeTags", "op": "has", "value": "npc.invited" }
+    ],
+    "effects": [
+      { "target": "relationship.sibling", "value": 1 }
+    ],
+    "templateKey": "event.npc-invitation-memory.template"
+  },
+  {
+    "id": "npc-covered-risk",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.mentor.lifeTags", "op": "has", "value": "npc.covered" }
+    ],
+    "effects": [
+      { "target": "world.pressure", "value": 1 },
+      { "target": "relationship.mentor.trust", "value": 1 }
+    ],
+    "templateKey": "event.npc-covered-risk.template"
+  },
+  {
+    "id": "npc-betrayal-whisper",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.neighbor.lifeTags", "op": "has", "value": "npc.betrayed" }
+    ],
+    "effects": [
+      { "target": "relationship.neighbor.conflict", "value": 2 }
+    ],
+    "templateKey": "event.npc-betrayal-whisper.template"
+  },
+  {
+    "id": "npc-introduction-letter",
+    "category": "relationship",
+    "weight": 4,
+    "cooldownTurns": 8,
+    "conditions": [
+      { "target": "relationship.mentor.lifeTags", "op": "has", "value": "npc.introduced" }
+    ],
+    "effects": [
+      { "target": "stats.social", "value": 1 },
+      { "target": "relationship.mentor.trust", "value": 1 }
+    ],
+    "templateKey": "event.npc-introduction-letter.template"
   }
 ]

@@ -71,6 +71,12 @@ function readRelationshipValue(state: GameState, target: ConditionTarget): Condi
   switch (field) {
     case "bond":
       return relationship.bond;
+    case "trust":
+      return relationship.trust;
+    case "dependency":
+      return relationship.dependency;
+    case "conflict":
+      return relationship.conflict;
     case "careerCategory":
       return relationship.careerCategory;
     case "educationLevel":

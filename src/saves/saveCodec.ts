@@ -1,7 +1,7 @@
 import type { GameState, SavePayload } from "../types/game";
 import { baseLocalisation, DEFAULT_LOCALE, t } from "../localisation";
 
-export const SAVE_VERSION = "0.6-causality-hardening";
+export const SAVE_VERSION = "0.7-npc-interactions";
 
 export function exportSave(state: GameState): string {
   const payload: SavePayload = {
@@ -70,9 +70,17 @@ function isCausalityRelationships(relationships: unknown[]): boolean {
     relationship !== null &&
     typeof (relationship as { affiliation?: unknown }).affiliation === "string" &&
     (relationship as { affiliation: string }).affiliation.length > 0 &&
+    typeof (relationship as { trust?: unknown }).trust === "number" &&
+    typeof (relationship as { dependency?: unknown }).dependency === "number" &&
+    typeof (relationship as { conflict?: unknown }).conflict === "number" &&
+    isNullableNumber((relationship as { lastInteractionTurn?: unknown }).lastInteractionTurn) &&
     isStringArray((relationship as { lifeTags?: unknown }).lifeTags) &&
     isStringArray((relationship as { traits?: unknown }).traits)
   );
+}
+
+function isNullableNumber(value: unknown): boolean {
+  return value === null || typeof value === "number";
 }
 
 function isStringArray(value: unknown): value is string[] {

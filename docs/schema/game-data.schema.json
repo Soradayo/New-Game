@@ -25,6 +25,10 @@
       "type": "array",
       "items": { "$ref": "https://new-game.local/schema/trait.schema.json" }
     },
+    "npcInteractions": {
+      "type": "array",
+      "items": { "$ref": "https://new-game.local/schema/npc-interaction.schema.json" }
+    },
     "turningPoints": {
       "type": "array",
       "items": { "$ref": "https://new-game.local/schema/turning-point.schema.json" }

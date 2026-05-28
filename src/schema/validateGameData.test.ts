@@ -24,6 +24,35 @@ describe("game data schema validation", () => {
     expect(baseRawGameData.events.some((event) => event.id === "underground-package")).toBe(true);
   });
 
+  it("includes and validates M4 NPC interactions", () => {
+    expect(baseRawGameData.npcInteractions.map((interaction) => interaction.id)).toEqual([
+      "support",
+      "consult",
+      "keep-distance",
+      "invite",
+      "cover",
+      "betray",
+      "introduce",
+    ]);
+    expect(() => parseMod(JSON.stringify({
+      npcInteractions: [
+        {
+          id: "test-share-secret",
+          labelKey: "test.npc.shareSecret.label",
+          descriptionKey: "test.npc.shareSecret.description",
+          conditions: [
+            { target: "relationship.$target.trust", op: "gte", value: 1 },
+          ],
+          effects: [
+            { target: "trust", value: 1 },
+            { target: "target.lifeTags.add", value: "test.shared-secret" },
+          ],
+          logKey: "test.npc.shareSecret.log",
+        },
+      ],
+    }))).not.toThrow();
+  });
+
   it("rejects a mod with an invalid event category", () => {
     expect(() => parseMod(JSON.stringify({
       events: [
@@ -101,6 +130,7 @@ describe("game data schema validation", () => {
       { target: "world.region", value: "moon" },
       { target: "relationship.mentor.educationLevel", value: "pirate" },
       { target: "relationship.all.affiliation", value: "guild" },
+      { target: "relationship.mentor.trust", value: "high" },
     ]) {
       expect(() => parseMod(JSON.stringify({
         actions: [
@@ -113,6 +143,23 @@ describe("game data schema validation", () => {
         ],
       }))).toThrow("/actions/0/effects/0");
     }
+  });
+
+  it("rejects invalid NPC interaction effects", () => {
+    expect(() => parseMod(JSON.stringify({
+      npcInteractions: [
+        {
+          id: "bad-npc-effect",
+          labelKey: "test.badNpc.label",
+          descriptionKey: "test.badNpc.description",
+          conditions: [],
+          effects: [
+            { target: "trust", value: "high" },
+          ],
+          logKey: "test.badNpc.log",
+        },
+      ],
+    }))).toThrow("/npcInteractions/0/effects/0");
   });
 
   it("rejects a mod with an invalid turning point choice career category", () => {

@@ -190,6 +190,13 @@ function applySingleRelationshipFieldEffect(relationship: Relationship, targetPa
     };
   }
 
+  if ((field === "trust" || field === "dependency" || field === "conflict") && typeof effect.value === "number") {
+    return {
+      ...relationship,
+      [field]: clamp(relationship[field] + effect.value, field === "trust" ? -100 : 0, 100),
+    };
+  }
+
   return relationship;
 }
 

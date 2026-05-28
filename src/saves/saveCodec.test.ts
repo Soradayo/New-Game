@@ -19,6 +19,10 @@ describe("save codec", () => {
     expect(imported.world.tags).toEqual([]);
     expect(imported.relationships[0].affiliation).toBe(state.relationships[0].affiliation);
     expect(imported.relationships[0].traits).toEqual([]);
+    expect(imported.relationships[0].trust).toBe(state.relationships[0].trust);
+    expect(imported.relationships[0].dependency).toBe(state.relationships[0].dependency);
+    expect(imported.relationships[0].conflict).toBe(state.relationships[0].conflict);
+    expect(imported.relationships[0].lastInteractionTurn).toBeNull();
     expect(imported.history[0].text).toBe(state.history[0].text);
     expect(imported.history[0].sourceType).toBe("system");
     expect(imported.history[0].sourceId).toBe("opening");
@@ -28,7 +32,7 @@ describe("save codec", () => {
   it("rejects old save versions so stale autosaves do not leak into the new structure", () => {
     const oldState = {
       ...createInitialState(baseGameData),
-      version: "0.5-causality",
+      version: "0.6-causality-hardening",
     };
 
     expect(() => importSave(JSON.stringify(oldState))).toThrow();
@@ -83,6 +87,18 @@ describe("save codec", () => {
       ...state,
       relationships: state.relationships.map((relationship, index) =>
         index === 0 ? { ...relationship, affiliation: "" } : relationship,
+      ),
+    };
+
+    expect(() => importSave(JSON.stringify(invalidState))).toThrow();
+  });
+
+  it("rejects saves without NPC interaction fields", () => {
+    const state = createInitialState(baseGameData);
+    const invalidState = {
+      ...state,
+      relationships: state.relationships.map((relationship, index) =>
+        index === 0 ? { ...relationship, trust: undefined } : relationship,
       ),
     };
 

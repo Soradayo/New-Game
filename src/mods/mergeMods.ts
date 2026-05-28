@@ -8,6 +8,7 @@ export function mergeGameData(base: RawGameData, mods: ModData[]): RawGameData {
     events: mergeById(data.events, mod.events),
     items: mergeById(data.items, mod.items),
     traits: mergeById(data.traits, mod.traits),
+    npcInteractions: mergeById(data.npcInteractions, mod.npcInteractions),
     turningPoints: mergeById(data.turningPoints, mod.turningPoints),
     names: {
       npcRoles: [...data.names.npcRoles, ...(mod.names?.npcRoles ?? [])],

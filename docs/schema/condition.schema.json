@@ -90,7 +90,7 @@
         },
         {
           "type": "string",
-          "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.bond$"
+          "pattern": "^relationship\\.(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*)\\.(bond|trust|dependency|conflict)$"
         }
       ]
     },

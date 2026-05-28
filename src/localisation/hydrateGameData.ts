@@ -32,6 +32,12 @@ export function hydrateGameData(data: RawGameData, pack: LocalisationPack): Game
       label: t(pack, trait.labelKey),
       description: t(pack, trait.descriptionKey),
     })),
+    npcInteractions: data.npcInteractions.map((interaction) => ({
+      ...interaction,
+      label: t(pack, interaction.labelKey),
+      description: t(pack, interaction.descriptionKey),
+      log: t(pack, interaction.logKey),
+    })),
     turningPoints: data.turningPoints.map((turningPoint) => ({
       ...turningPoint,
       label: t(pack, turningPoint.labelKey),

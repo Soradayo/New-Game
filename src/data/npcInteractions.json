@@ -1,0 +1,110 @@
+[
+  {
+    "id": "support",
+    "labelKey": "npcInteraction.support.label",
+    "descriptionKey": "npcInteraction.support.description",
+    "conditions": [
+      { "target": "money", "op": "gte", "value": 1 }
+    ],
+    "effects": [
+      { "target": "money", "value": -1 },
+      { "target": "bond", "value": 2 },
+      { "target": "trust", "value": 2 },
+      { "target": "dependency", "value": 1 },
+      { "target": "target.lifeTags.add", "value": "npc.supported" },
+      { "target": "player.lifeTags.add", "value": "npc.supporter" }
+    ],
+    "logKey": "npcInteraction.support.log"
+  },
+  {
+    "id": "consult",
+    "labelKey": "npcInteraction.consult.label",
+    "descriptionKey": "npcInteraction.consult.description",
+    "conditions": [
+      { "target": "relationship.$target.trust", "op": "gte", "value": 0 }
+    ],
+    "effects": [
+      { "target": "bond", "value": 1 },
+      { "target": "trust", "value": 1 },
+      { "target": "stats.mind", "value": 1 },
+      { "target": "target.lifeTags.add", "value": "npc.consulted" }
+    ],
+    "logKey": "npcInteraction.consult.log"
+  },
+  {
+    "id": "keep-distance",
+    "labelKey": "npcInteraction.keep-distance.label",
+    "descriptionKey": "npcInteraction.keep-distance.description",
+    "conditions": [],
+    "effects": [
+      { "target": "bond", "value": -1 },
+      { "target": "dependency", "value": -1 },
+      { "target": "conflict", "value": -1 },
+      { "target": "target.lifeTags.add", "value": "npc.distance-kept" }
+    ],
+    "logKey": "npcInteraction.keep-distance.log"
+  },
+  {
+    "id": "invite",
+    "labelKey": "npcInteraction.invite.label",
+    "descriptionKey": "npcInteraction.invite.description",
+    "conditions": [
+      { "target": "relationship.$target.bond", "op": "gte", "value": 8 }
+    ],
+    "effects": [
+      { "target": "bond", "value": 2 },
+      { "target": "trust", "value": 1 },
+      { "target": "stats.social", "value": 1 },
+      { "target": "target.lifeTags.add", "value": "npc.invited" },
+      { "target": "player.lifeTags.add", "value": "npc.invited-someone" }
+    ],
+    "logKey": "npcInteraction.invite.log"
+  },
+  {
+    "id": "cover",
+    "labelKey": "npcInteraction.cover.label",
+    "descriptionKey": "npcInteraction.cover.description",
+    "conditions": [
+      { "target": "relationship.$target.trust", "op": "gte", "value": 8 }
+    ],
+    "effects": [
+      { "target": "trust", "value": 2 },
+      { "target": "dependency", "value": 2 },
+      { "target": "world.pressure", "value": 1 },
+      { "target": "target.lifeTags.add", "value": "npc.covered" }
+    ],
+    "logKey": "npcInteraction.cover.log"
+  },
+  {
+    "id": "betray",
+    "labelKey": "npcInteraction.betray.label",
+    "descriptionKey": "npcInteraction.betray.description",
+    "conditions": [
+      { "target": "relationship.$target.bond", "op": "gte", "value": 0 }
+    ],
+    "effects": [
+      { "target": "money", "value": 3 },
+      { "target": "bond", "value": -5 },
+      { "target": "trust", "value": -6 },
+      { "target": "conflict", "value": 4 },
+      { "target": "target.lifeTags.add", "value": "npc.betrayed" },
+      { "target": "player.lifeTags.add", "value": "npc.betrayer" }
+    ],
+    "logKey": "npcInteraction.betray.log"
+  },
+  {
+    "id": "introduce",
+    "labelKey": "npcInteraction.introduce.label",
+    "descriptionKey": "npcInteraction.introduce.description",
+    "conditions": [
+      { "target": "relationship.$target.bond", "op": "gte", "value": 6 }
+    ],
+    "effects": [
+      { "target": "bond", "value": 1 },
+      { "target": "trust", "value": 1 },
+      { "target": "stats.social", "value": 1 },
+      { "target": "target.lifeTags.add", "value": "npc.introduced" }
+    ],
+    "logKey": "npcInteraction.introduce.log"
+  }
+]

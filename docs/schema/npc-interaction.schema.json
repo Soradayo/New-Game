@@ -1,0 +1,195 @@
+{
+  "$id": "https://new-game.local/schema/npc-interaction.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NpcInteraction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "labelKey", "descriptionKey", "conditions", "effects", "logKey"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$"
+    },
+    "labelKey": { "type": "string", "minLength": 1 },
+    "descriptionKey": { "type": "string", "minLength": 1 },
+    "conditions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/npcCondition" }
+    },
+    "effects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/npcInteractionEffect" }
+    },
+    "logKey": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "npcCondition": {
+      "type": "object",
+      "oneOf": [
+        { "$ref": "#/$defs/npcNumericCondition" },
+        { "$ref": "#/$defs/npcStringCondition" },
+        { "$ref": "#/$defs/npcListCondition" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["all"],
+          "properties": {
+            "all": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/npcCondition" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["any"],
+          "properties": {
+            "any": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/npcCondition" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["not"],
+          "properties": {
+            "not": { "$ref": "#/$defs/npcCondition" }
+          }
+        }
+      ]
+    },
+    "npcNumericCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "op", "value"],
+      "properties": {
+        "target": { "$ref": "#/$defs/npcNumericTarget" },
+        "op": { "enum": ["gt", "gte", "lt", "lte", "eq", "neq"] },
+        "value": { "type": "number" }
+      }
+    },
+    "npcStringCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "op", "value"],
+      "properties": {
+        "target": { "$ref": "#/$defs/npcStringTarget" },
+        "op": { "enum": ["eq", "neq"] },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "npcListCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "op", "value"],
+      "properties": {
+        "target": { "$ref": "#/$defs/npcListTarget" },
+        "op": { "enum": ["has", "notHas"] },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "npcNumericTarget": {
+      "anyOf": [
+        {
+          "enum": [
+            "ageMonths",
+            "money",
+            "world.pressure",
+            "stats.body",
+            "stats.mind",
+            "stats.craft",
+            "stats.social",
+            "stats.spirit"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^relationship\\.(\\$target|(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*))\\.(bond|trust|dependency|conflict)$"
+        }
+      ]
+    },
+    "npcStringTarget": {
+      "anyOf": [
+        {
+          "enum": [
+            "educationLevel",
+            "careerCategory",
+            "socialClass",
+            "affiliation",
+            "world.region"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^relationship\\.(\\$target|(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*))\\.(careerCategory|educationLevel|affiliation)$"
+        }
+      ]
+    },
+    "npcListTarget": {
+      "anyOf": [
+        {
+          "enum": [
+            "player.lifeTags",
+            "player.traits",
+            "world.tags"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^relationship\\.(\\$target|(?!all\\.)([a-zA-Z0-9][a-zA-Z0-9-]*))\\.(lifeTags|traits)$"
+        }
+      ]
+    },
+    "npcInteractionEffect": {
+      "type": "object",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "required": ["target", "value"],
+          "properties": {
+            "target": {
+              "enum": [
+                "bond",
+                "trust",
+                "dependency",
+                "conflict",
+                "money",
+                "world.pressure",
+                "stats.body",
+                "stats.mind",
+                "stats.craft",
+                "stats.social",
+                "stats.spirit"
+              ]
+            },
+            "value": { "type": "number" }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "required": ["target", "value"],
+          "properties": {
+            "target": {
+              "enum": [
+                "target.lifeTags.add",
+                "target.lifeTags.remove",
+                "target.traits.add",
+                "target.traits.remove",
+                "player.lifeTags.add",
+                "player.lifeTags.remove",
+                "player.traits.add",
+                "player.traits.remove"
+              ]
+            },
+            "value": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    }
+  }
+}
