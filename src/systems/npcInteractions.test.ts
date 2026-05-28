@@ -21,14 +21,26 @@ describe("NPC interactions", () => {
     expect(next.history[0].sourceType).toBe("npcInteraction");
     expect(next.history[0].sourceId).toBe("sibling:support");
     expect(next.history[0].locKey).toBe("npcInteraction.support.log");
+    expect(next.history[0].stateDiff?.map((diff) => diff.label)).toEqual(["bond", "trust", "dependency"]);
   });
 
   it("prevents repeated interaction with the same NPC in one turn", () => {
     const state = createInitialState(baseGameData);
     const next = performNpcInteraction(state, baseGameData, "sibling", "support");
+    const availability = getNpcInteractionAvailability(next, "sibling", baseGameData.npcInteractions[1]);
 
     expect(() => performNpcInteraction(next, baseGameData, "sibling", "consult")).toThrow();
-    expect(getNpcInteractionAvailability(next, "sibling", baseGameData.npcInteractions[1]).available).toBe(false);
+    expect(availability.available).toBe(false);
+    expect(availability.reason).toBe("system.error.npcInteractionAlreadyUsed");
+  });
+
+  it("reports unavailable interactions separately from used interactions", () => {
+    const state = createInitialState(baseGameData);
+    const cover = baseGameData.npcInteractions.find((interaction) => interaction.id === "cover")!;
+    const availability = getNpcInteractionAvailability(state, "neighbor", cover);
+
+    expect(availability.available).toBe(false);
+    expect(availability.reason).toBe("system.error.npcInteractionUnavailable");
   });
 
   it("uses target conditions for the selected NPC", () => {

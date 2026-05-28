@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGameStore } from "../../core/useGameStore";
 import { t } from "../../localisation";
 import type { HistoryEntry } from "../../types/game";
-import { historyMetaLabel } from "../historyDisplay";
+import { historyDiffLabel, historyMetaLabel } from "../historyDisplay";
 
 export function HistoryTab({ history }: { history: HistoryEntry[] }) {
   const pack = useGameStore((store) => store.data.localisation);
@@ -64,6 +64,15 @@ function HistoryLine({ entry, compact = false }: { entry: HistoryEntry; compact?
       {meta ? <span className="text-zinc-600">[{meta}]</span> : null}
       {meta ? " " : null}
       {entry.text}
+      {entry.stateDiff && entry.stateDiff.length > 0 ? (
+        <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
+          {entry.stateDiff.map((diff, index) => (
+            <span key={`${diff.target}-${diff.label ?? "value"}-${index}`} className="border border-zinc-800 px-1.5 py-0.5 text-xs text-zinc-500">
+              {historyDiffLabel(pack, diff)}
+            </span>
+          ))}
+        </span>
+      ) : null}
     </p>
   );
 }
